@@ -1,0 +1,34 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:50334",
+      "sslPort": 44358
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "SMTPPassword": "Repairme*51",
+        "BugTrackerDBConnection": "Data Source=sql5041.site4now.net;Initial Catalog=DB_A54AFA_BugTracker;User ID=DB_A54AFA_BugTracker_admin;Password=Repairme*5;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
+        "SMTPSenderEmail": "postmaster@bugtrackerproject.com",
+        "SMTPPort": "8889",
+        "SMTPSenderName": "Bug Tracker Project",
+        "SMTPServer": "mail.bugtrackerproject.com",
+        "SMTPAccount": "postmaster@bugtrackerproject.com",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "BugTrackerProject": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    }
+  }
+}

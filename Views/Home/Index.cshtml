@@ -1,0 +1,170 @@
+﻿@model HomeViewModel
+@inject SignInManager<IdentityUser> signInManager
+
+
+@{
+    ViewData["Title"] = "Home Page";
+    var bugsSortedByDueDate = Model.MyBugs.OrderBy(d => d.DueDate);
+
+}
+
+
+@if (signInManager.IsSignedIn(User))
+{
+
+    <div class="container">
+        <div class="row">
+            @if (bugsSortedByDueDate.Count() != 0)
+            {
+                <div class="col-lg mr-2">
+                    <h3><a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="MyBugs">My Bugs</a></h3>
+                    <ul class="list-group">
+
+                        @foreach (var bug in bugsSortedByDueDate)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div><a href="@Url.Action("bugdetails", "bug", new { bugId = bug.BugId })" class="text-info mr-1">@bug.Title</a></div>
+                                <div>
+                                    @{
+                                        var severityBackgroundColor = "";
+                                        switch (bug.Severity)
+                                        {
+                                            case BugSeverity.critical:
+                                                severityBackgroundColor = "#b81c04";
+                                                break;
+                                            case BugSeverity.major:
+                                                severityBackgroundColor = "#d67404";
+                                                break;
+                                            case BugSeverity.minor:
+                                                severityBackgroundColor = "#ffee00";
+                                                break;
+                                        }
+                                    }
+                                    <span class="badge badge-pill" style="background-color: @severityBackgroundColor; color: black;">@bug.Severity</span>
+                                    @{
+                                        var statusBackgroundColor = "";
+                                        var badgeText = "";
+                                        switch (bug.Status)
+                                        {
+                                            case BugStatus.closed:
+                                                badgeText = "Closed";
+                                                statusBackgroundColor = "#00bc8c";
+                                                break;
+                                            case BugStatus.open:
+                                                badgeText = "Open";
+                                                statusBackgroundColor = "#375a7f";
+                                                break;
+                                            case BugStatus.to_be_tested:
+                                                statusBackgroundColor = "#3498DB";
+                                                badgeText = "To Be Tested";
+                                                break;
+                                        }
+                                    }
+                                    <span class="badge badge-pill" style="background-color: @statusBackgroundColor; color: black;"> @badgeText</span>
+                                    <span class="badge badge-info badge-pill" style="color: black;">Due Date: @bug.DueDate.ToShortDateString()</span>
+                                </div>
+
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            }
+
+
+            <div class="col-lg">
+                @*<span class="badge badge-pill badge-primary">Primary - Completed</span>
+                    <span class="badge badge-pill badge-secondary">Secondary - OnHold</span>
+                    <span class="badge badge-pill badge-success">Success - Active</span>
+                    <span class="badge badge-pill badge-danger" a>Danger - Delayed</span>
+                    <span class="badge badge-pill badge-warning">Warning - InTesting</span>
+                    <span class="badge badge-pill badge-info">Info - OnTrack</span>
+                    <span class="badge badge-pill badge-light">Light - InPlanning</span>
+                    <span class="badge badge-pill badge-dark">Dark - Cancelled</span>*@
+                <h3><a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="MyProjects">My Projects</a></h3>
+
+                @if (Model.MyProjects.Count() == 0)
+                {
+                    <h5>Get started by adding a project</h5>
+                    <div>
+                        <a class="btn btn-primary" href="@Url.Action("addproject", "project")">Add Project</a>
+                    </div>
+
+                }
+                else
+                {
+                    <ul class="list-group">
+
+                        @foreach (var project in Model.MyProjects)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                                <div>
+                                    <a href="@Url.Action("SetGlobalVar", "project", new { projectId = project.ProjectId })" class="text-info mr-1">@project.ProjectName</a>
+                                </div>
+                                <div>
+                                    @{
+                                        var badgeSatus = "";
+                                        var badgeText = "";
+                                        switch (project.ProjectStatus)
+                                        {
+                                            case ProjectStatus.Completed:
+                                                badgeSatus = "badge-primary";
+                                                badgeText = "Completed";
+                                                break;
+                                            case ProjectStatus.OnHold:
+                                                badgeSatus = "badge-secondary";
+                                                badgeText = "On Hold";
+                                                break;
+                                            case ProjectStatus.Active:
+                                                badgeSatus = "badge-success";
+                                                badgeText = "Active";
+                                                break;
+                                            case ProjectStatus.Delayed:
+                                                badgeSatus = "badge-danger";
+                                                badgeText = "Delayed";
+                                                break;
+                                            case ProjectStatus.InTesting:
+                                                badgeSatus = "badge-warning";
+                                                badgeText = "In Testing";
+                                                break;
+                                            case ProjectStatus.OnTrack:
+                                                badgeSatus = "badge-info";
+                                                badgeText = "On Track";
+                                                break;
+                                            case ProjectStatus.InPlanning:
+                                                badgeSatus = "badge-light";
+                                                badgeText = "In Planning";
+                                                break;
+                                            case ProjectStatus.Cancelled:
+                                                badgeSatus = "badge-dark";
+                                                badgeText = "Cancelled";
+                                                break;
+                                        }
+                                    }
+                                    <span class="badge @badgeSatus badge-pill" style="color: black;">Status: @badgeText</span>
+
+                                    <span class="badge badge-info badge-pill" style="color: black;">End Date: @project.EndDate.ToShortDateString()</span>
+                                    <span class="badge badge-info badge-pill" style="color: black;">Owner Id: @project.OwnerUserName</span>
+
+
+                                </div>
+                            </li>
+
+                        }
+                    </ul>
+                }
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+} else
+{
+    <h4>Please sign in </h4>
+}
+

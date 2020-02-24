@@ -1,0 +1,35 @@
+﻿@model AddUserToProjectViewModel
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+}
+
+
+
+    <div class="container">
+        <h5 class="mt-3">Add User</h5>
+        <form action="@Url.Action("FindUsers", "Administration")" enctype="multipart/form-data" method="post">
+            <p>Search for userName to add to projct</p>
+            <input hidden asp-for="@Model.ProjectId" />
+            <input asp-for="@Model.SearchEntry" class="form-control-lg bg-dark text-info col-12 col-md-8 mt-3" id="userSearch" />
+        </form>
+        <form>
+            <a href="#" style="display: none" id="addUsers" class="btn btn-primary mt-3">Add Users</a>
+            <div style="display: none; margin-top: 20px;" id="UsersHaveBeenAdded">
+                <p>Selected Users have been added.</p>
+                <a class="btn btn-primary" href="@Url.Action("ListUsers", "Administration", new { projectId = Model.ProjectId})">
+                Go back to Project Users</a>
+            </div>
+            <div id="usersToAdd" action="@Url.Action("AddUserToProject", "Administration")">
+            </div>
+        </form>
+
+
+
+    </div>
+
+
+
+@section Scripts{
+    <script src="~/js/AddUserToProject.js"></script>
+}

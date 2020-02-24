@@ -1,0 +1,80 @@
+﻿@model AddProjectViewModel
+@*@inject IProjectRepository _projectRepository*@
+
+
+
+    <form action="@Url.Action("addproject", "project", new { userId = Model.UserId})" enctype="multipart/form-data" method="post" class="container">
+        <div class="col form-group mt-3">
+            <label asp-for="Project.ProjectName" class="col-sm-3 col-form-label text-info"></label>
+            <input asp-for="Project.ProjectName" class="form-control-lg col col-form-label bg-dark text-info" style="font-size: x-large;" placeholder="Name" />
+            <span asp-validation-for="Project.ProjectName" style="display:block" class="text-danger"></span>
+        </div>
+        <div class="form-group row ">
+            <div class="col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                <label asp-for="Project.ProjectStatus" class="col-form-label" style="color: #3498DB;font-size:small"></label>
+                <select asp-for="Project.ProjectStatus" id="projectStatus" class="form-control " style="color: black; font-size:small">
+                    <option value="0" style="background:#00bc8c;color: black">Project Status: Active</option>
+                    <option value="1" style="background:#3498DB;color: black">Project Status: On Track</option>
+                    <option value="2" style="background:#E74C3C;color: black">Project Status: Delayed</option>
+                    <option value="3" style="background:#F39C12;color: black">Project Status: In Testing</option>
+                    <option value="4" style="background:#444; color: #3498DB;">Project Status: On Hold</option>
+                    <option value="5" style="background:#303030; color: #3498DB;">Project Status: Cancelled</option>
+                    <option value="6" style="background:#999;color: black">Project Status: In Planning</option>
+                    <option value="7" style="background:#375a7f;color: black">Project Status: Completed</option>
+                </select>
+                <span asp-validation-for="Project.ProjectStatus" style="display:block" class="text-danger"></span>
+
+                @*this is just set to the current users userId*@
+                @*<label asp-for="Project.OwnerId" class="col-form-label" style="color: #3498DB;font-size:small"></label>
+                <select asp-for="Project.OwnerId" class="form-control bg-dark" style="color: #3498DB; font-size:small" id="exampleSelect1">
+                    <option value="1">Owner Id: 1</option>
+                    <option value="2">Owner Id: 2</option>
+                </select>
+                <span asp-validation-for="Project.OwnerId" style="display:block" class="text-danger"></span>*@
+
+                <label asp-for="Project.StartDate" class=" col-form-label" style="color: #3498DB;font-size:small"></label>
+                <input asp-for="Project.StartDate" class="form-control bg-dark" style="color: #3498DB;font-size:small" type="date" placeholder="Start Date" />
+                <span asp-validation-for="Project.StartDate" style="display:block" class="text-danger"></span>
+
+                <label asp-for="Project.EndDate" class=" col-form-label" style="color: #3498DB;font-size:small"></label>
+                <input asp-for="Project.EndDate" class="form-control bg-dark" style="color: #3498DB;font-size:small" type="date" placeholder="End Date" />
+                <span asp-validation-for="Project.EndDate" style="display:block" class="text-danger"></span>
+
+            </div>
+            <div class="col-sm-6 col-md-7 col-lg-8 col-xl-9">
+                <label asp-for="Project.ProjectDescription" class="col-form-label" style="color: #3498DB;"></label>
+                <textarea asp-for="Project.ProjectDescription" class="form-control bg-dark" style="color: #3498DB; height: 150px;" placeholder="Enter a description"></textarea>
+                <span asp-validation-for="Project.ProjectDescription" style="display:block" class="text-danger"></span>
+                <button type="submit" class="d-block btn btn-primary ml-auto mt-3">Submit</button>
+
+            </div>
+            <input hidden />
+        </div>
+
+
+
+        @*<input class="d-none" style="visibility:hidden;" asp-for="ProjectId" />*@
+
+        @*<div class="form-group row"> Maybe, when I convince myself to allow uploading of files for projects
+            <label asp-for="ScreenShots" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <div class="custom-file">
+                    <input multiple asp-for="ScreenShots" class="form-control custom-file-input" />
+                    <label class="custom-file-label">Choose File...</label>
+                </div>
+            </div>
+        </div>*@
+
+        @*@section Scripts{
+            <script>
+        $(document).ready(function () {
+            $(".custom-file-input").on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next(".custom-file-label").html(fileName);
+            })
+        })
+            </script>
+        }*@
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </form>

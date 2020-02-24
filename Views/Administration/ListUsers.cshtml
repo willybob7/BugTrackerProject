@@ -1,0 +1,113 @@
+﻿@model ListUsersViewModel
+@inject UserManager<IdentityUser> UserManager
+@inject IAuthorizationService AuthorizationService
+
+
+
+@{
+    ViewBag.Title = "All Users";
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+}
+
+<h1>All Users</h1>
+
+@if (Model.Users.Any())
+{
+    <a asp-action="AddUserToProject" asp-controller="Administration" asp-route-projectId="@Model.ProjectId"
+       class="btn btn-primary mb-3" style="width:auto">
+        Add new user
+    </a>
+
+    for (var i = 0; i < Model.Users.Count; i++)
+    {
+        if (Model.Users[i].Id == Model.OwnerId)
+        {
+            <div class="card mb-3" id="userDiv_@Model.Users[i].Id">
+                <div class="card-header">
+                    Owner Id : @Model.Users[i].Id
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Users[i].UserName</h5>
+                </div>
+                <div class="card-footer">
+                    <div>
+                        <p>Project Owner</p>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (UserManager.GetUserId(User) == Model.Users[i].Id)
+        {
+            <div class="card mb-3" id="userDiv_@Model.Users[i].Id">
+                <div class="card-header">
+                    Current User Id : @Model.Users[i].Id
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Users[i].UserName --- Current User</h5>
+                </div>
+                <div class="card-footer">
+                    <div>
+                        <a asp-action="EditUser" asp-controller="Administration"
+                           asp-route-id="@Model.Users[i].Id" asp-route-projectId="@Model.ProjectId" class="btn btn-primary">Edit</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        else
+        {
+            <div class="card mb-3" id="userDiv_@Model.Users[i].Id">
+                <div class="card-header">
+                    User Id : @Model.Users[i].Id
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Users[i].UserName</h5>
+                </div>
+                <div class="card-footer">
+                    <div>
+                        <a asp-action="EditUser" asp-controller="Administration"
+                           asp-route-id="@Model.Users[i].Id" asp-route-projectId="@Model.ProjectId" class="btn btn-primary">Edit</a>
+                        <span id="confirmDeleteSpan_@Model.Users[i].Id" style="display:none">
+                            <span>Are you sure you want to remove user from project?</span>
+                            <button data-url="@Url.Action("RemoveUserFromProject", "Administration")"
+                                    data-userId="@Model.Users[i].Id"
+                                    data-projectId="@Model.ProjectId"
+                                    class="btn btn-danger deleteUserYep">
+                                Yes
+                            </button>
+                            <a href="#" class="btn btn-primary deleteUserNope">No</a>
+                        </span>
+
+                        <span id="@Model.Users[i].Id">
+                            <a href="#" class="btn btn-danger deleteUserMaybe">Remove from project</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+
+    }
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            No users created yet
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">
+                Use the button below to create a user
+            </h5>
+            <a class="btn btn-primary" style="width:auto"
+               asp-controller="Account" asp-action="Register">
+                Add new user
+            </a>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/ListUsers.js"></script>
+}

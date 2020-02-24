@@ -1,0 +1,132 @@
+﻿
+@inject SignInManager<IdentityUser> signInManager
+@inject IAuthorizationService AuthorizationService
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bug Tracker</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-darkly.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/lib/fontawesome-free-5.11.2-web/fontawesome-free-5.11.2-web/css/all.css" rel="stylesheet" />
+    <link href="~/lib/Gallery-2.36.0/css/blueimp-gallery.min.css" rel="stylesheet" />
+    <link href="~/lib/summernote-0.8.12-dist/dist/summernote-bs4.css" rel="stylesheet" />
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-spider"></i> Bug Tracker</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row">
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="MyProjects">My Projects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="MyBugs">My Bugs</a>
+                            </li>
+                        </ul>
+                    }
+
+                    <ul class="navbar-nav ml-auto">
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <form method="post" asp-action="logout" asp-controller="account">
+                                    <button type="submit" class="nav-link btn btn-link py-0" style="width:auto">
+                                        Logout @User.Identity.Name
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a href="@Url.Action("register", "account")" class="nav-link">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("login", "account")" class="nav-link">Login</a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="d-flex" id="wrapper">
+        <div class="bg-dark" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <input hidden value="@Model.ProjectId" id="projectId" />
+                <a href="@Url.Action("projectdetails", "project",  new { Model.ProjectId })" class="text-center list-group-item list-group-item-action bg-dark">
+                    <div class="d-flex justify-content-center"><i class="align-self-center fas fa-fw fa-tachometer-alt"></i></div>
+                    Dashboard
+                </a>
+                <a href="@Url.Action("projectbugs", "project", new { Model.ProjectId })" class="text-center list-group-item list-group-item-action bg-dark">
+                    <div class="d-flex justify-content-center"><i class="align-self-center fas fa-bug"></i></div>
+                    Bugs
+                </a>
+
+                @if ((await AuthorizationService.AuthorizeAsync(User, "DeveloperPolicy")).Succeeded)
+                    {
+                        <a href="@Url.Action("ListUsers", "Administration", new { Model.ProjectId})" class="text-center list-group-item list-group-item-action bg-dark">
+                            <div class="d-flex justify-content-center"><i class="align-self-center fas fa-users"></i></div>
+                            List Users
+                        </a>
+                    }
+                </div>
+        </div>
+        <button class="btn btn-primary" id="menu-toggle"></button>
+
+        <div id="page-content-wrapper">
+            <main role="main" class="pb-3">
+                @RenderBody()
+
+            </main>
+        </div>
+    </div>
+
+    <footer class="border-top bg-primary footer text-muted">
+        <div class="container">
+            &copy; 2019 - BugTrackerProject - <a asp-area="" asp-controller="Home" asp-action="Privacy"><span class="text-light">Privacy</span></a>
+        </div>
+    </footer>
+    <script src="~/lib/chart.js/Chart.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/summernote-0.8.12-dist/dist/summernote-bs4.min.js"></script>
+    <script src="~/lib/Gallery-2.36.0/js/blueimp-gallery.js"></script>
+    <script src="~/lib/Gallery-2.36.0/js/blueimp-gallery-indicator.js"></script>
+
+
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+
+
+
+

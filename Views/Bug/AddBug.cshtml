@@ -1,0 +1,184 @@
+﻿@model AddNewBug
+@inject IAuthorizationService AuthorizationService
+
+@{
+
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+    var managerLevel = (await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded;
+
+}
+
+
+
+<div class="container mt-3">
+    <form id="addBugForm" action="@Url.Action("addbug", "bug")" enctype="multipart/form-data" method="post">
+        <div class="form-group row">
+            <label asp-for="@Model.NewBugAttributes.Title" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+                <input asp-for="@Model.NewBugAttributes.Title" class="form-control bg-dark text-info" placeholder="Name" />
+                <span asp-validation-for="@Model.NewBugAttributes.Title" style="display:block" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="@Model.NewBugAttributes.Description" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+                <textarea asp-for="@Model.NewBugAttributes.Description" class="form-control bg-dark text-info" placeholder="Enter a description"></textarea>
+                <span asp-validation-for="@Model.NewBugAttributes.Description" style="display:block" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="@Model.NewBugAttributes.AssigneeUserId" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+
+                @if (managerLevel)
+                {
+                    <select asp-for="@Model.NewBugAttributes.AssigneeUserId" class="form-control bg-dark text-info">
+                        <option value="">no one yet</option>
+                        @foreach (var user in Model.ProjectUsers)
+                        {
+                            <option value="@user.Id">@user.UserName</option>
+                        }
+
+                    </select>
+                }
+                else
+                {
+                    <select disabled asp-for="@Model.NewBugAttributes.AssigneeUserId" class="form-control bg-dark text-info">
+                        <option value="">no one yet</option>
+                        @foreach (var user in Model.ProjectUsers)
+                        {
+                            <option value="@user.Id">@user.UserName</option>
+                        }
+
+                    </select>
+                }
+                <span asp-validation-for="@Model.NewBugAttributes.AssigneeUserId" style="display:block" class="text-danger"></span>
+
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label asp-for="@Model.NewBugAttributes.DueDate" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-5 col-lg-3">
+                <input asp-for="@Model.NewBugAttributes.DueDate" class="form-control bg-dark text-info" type="date" />
+                <span asp-validation-for="@Model.NewBugAttributes.DueDate" style="display:block" class="text-danger"></span>
+
+            </div>
+        </div>
+
+        <div class="form-group row ">
+            <label asp-for="@Model.NewBugAttributes.Severity" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+                <select asp-for="@Model.NewBugAttributes.Severity" class="form-control" style="color: #3498DB; background: #303030" id="bugSeverity">
+                    <option value="0" style="background: #b81c04; color:black">Critical</option>
+                    <option value="1" style="background: #d67404; color:black">Major</option>
+                    <option value="2" style="background: #ffee00; color:black">Minor</option>
+                </select>
+                <span asp-validation-for="@Model.NewBugAttributes.Severity" style="display:block" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row form-group ">
+            <label asp-for="@Model.NewBugAttributes.Reproducible" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+                <select asp-for="@Model.NewBugAttributes.Reproducible" class="form-control bg-dark text-info" asp-items="Html.GetEnumSelectList<IsItReproducible>()">
+                    <option value="">Please select</option>
+                </select>
+                <span asp-validation-for="@Model.NewBugAttributes.Reproducible" style="display:block" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group row ">
+            <label asp-for="@Model.NewBugAttributes.Status" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+                <select asp-for="@Model.NewBugAttributes.Status" class="form-control" style="color: #3498DB; background: #303030" id="bugStatus">
+                    <option value="0" style="background:#375a7f; color:black">Open</option>
+                    <option value="1" style="background:#3498DB; color:black">To Be Tested</option>
+                    <option value="2" style="background:#00bc8c; color:black">Closed</option>
+                </select>
+                <span asp-validation-for="@Model.NewBugAttributes.Status" style="display:block" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row ">
+            <label asp-for="@Model.ScreenShots" class="col-sm-3 col-form-label"></label>
+            <div class="col-sm-9">
+                <div class="custom-file">
+                    <input multiple asp-for="@Model.ScreenShots" class="form-control custom-file-input bg-dark text-info" />
+                    <label class="custom-file-label bg-dark text-info">Choose Screenshot...</label>
+                </div>
+            </div>
+        </div>
+
+        <input hidden id="associatedProject" asp-for="@Model.NewBugAttributes.AssociatedProject" />
+        <div class="form-group row">
+            <div class="col-sm-9">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".custom-file-input").on("change", function () {
+                //var fileName = $(this).val().split("\\").pop();
+                //$(this).next(".custom-file-label").html(fileName);
+                var fileLabel = $(this).next(".custom-file-label");
+                var files = $(this)[0].files;
+                if (files.length > 1) {
+                    fileLabel.html(files.length + " files selected");
+                } else if (files.length == 1) {
+                    fileLabel.html(files[0].name);
+                }
+            })
+
+
+            var bugSeveritySelect = document.getElementById("bugSeverity")
+            bugSeveritySelect.onchange = bugSeveritySelectBackground
+
+            var bugStatusSelect = document.getElementById("bugStatus")
+            bugStatusSelect.onchange = bugStatusSelectBackground
+
+            function bugSeveritySelectBackground() {
+                var bugSeveritySelectValue = bugSeveritySelect.value
+                switch (bugSeveritySelectValue) {
+                    case "0":
+                        bugSeveritySelect.style.background = "#b81c04"
+                        bugSeveritySelect.style.color = "black"
+                        break;
+                    case "1":
+                        bugSeveritySelect.style.background = "#d67404"
+                        bugSeveritySelect.style.color = "black"
+                        break;
+                    default:
+                        bugSeveritySelect.style.background = "#ffee00"
+                        bugSeveritySelect.style.color = "black"
+
+                }
+            }
+
+            function bugStatusSelectBackground() {
+                var bugStatusSelectValue = bugStatusSelect.value
+                switch (bugStatusSelectValue) {
+                    case "0":
+                        bugStatusSelect.style.background = "#375a7f"
+                        bugStatusSelect.style.color = "black"
+                        break;
+                    case "1":
+                        bugStatusSelect.style.background = "#3498DB"
+                        bugStatusSelect.style.color = "black"
+                        break;
+                    default:
+                        bugStatusSelect.style.background = "#00bc8c"
+                        bugStatusSelect.style.color = "black"
+                }
+            }
+            bugSeveritySelectBackground();
+            bugStatusSelectBackground();
+
+        })
+    </script>
+}

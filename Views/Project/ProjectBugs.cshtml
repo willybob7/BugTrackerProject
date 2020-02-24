@@ -1,0 +1,90 @@
+﻿@model ProjectDetailsAndAssociatedBugs
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+    var bugsSortedByDueDate = Model.ProjectBugs.OrderBy(d => d.DueDate);
+  }
+
+
+
+
+<div class="container-fluid">
+    <div class="row justify-content-between">
+        <h5 class="m-3">@Model.Project.ProjectName Bug List</h5>
+        <a class="btn btn-primary m-2" href="@Url.Action("addbug", "bug", new { projectId = Model.Project.ProjectId})">Add bug</a>
+    </div>
+    <div class="row justify-content-end">
+        <p class="badge-secondary p-2 badge m-2">Bugs Count: @bugsSortedByDueDate.Count()</p>
+    </div>
+</div>
+
+<div class="table-responsive container">
+    <table class="table table-hover table-borderless table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Bug Name</th>
+                <th scope="col">Reporter</th>
+                <th scope="col">Assignee</th>
+                <th scope="col">Status</th>
+                <th scope="col">Severity</th>
+                <th scope="col">Entered Date</th>
+                <th scope="col">Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bug in bugsSortedByDueDate)
+            {
+                <tr>
+                    <th><a href="@Url.Action("bugdetails", "bug", new { bugId = bug.BugId })">@bug.Title</a></th>
+                    <td>@bug.ReporterUserName</td>
+                    <td>@bug.AssingeeUserName</td>
+                    <td>
+                        @{
+                            var statusBackgroundColor = "";
+                            var badgeText = "";
+                            switch (bug.Status)
+                            {
+                                case BugStatus.closed:
+                                    badgeText = "Closed";
+                                    statusBackgroundColor = "#00bc8c";
+                                    break;
+                                case BugStatus.open:
+                                    badgeText = "Open";
+                                    statusBackgroundColor = "#375a7f";
+                                    break;
+                                case BugStatus.to_be_tested:
+                                    statusBackgroundColor = "#3498DB";
+                                    badgeText = "To Be Tested";
+                                    break;
+                            }
+                        }
+                        <span class="badge badge-pill" style="background-color: @statusBackgroundColor; color: black;"> @badgeText</span>
+                    </td>
+                    <td>
+                        @{
+                            var seveirtyBackgroundColor = "";
+                            switch (bug.Severity)
+                            {
+                                case BugSeverity.critical:
+                                    seveirtyBackgroundColor = "#b81c04";
+                                    break;
+                                case BugSeverity.major:
+                                    seveirtyBackgroundColor = "#d67404";
+                                    break;
+                                case BugSeverity.minor:
+                                    seveirtyBackgroundColor = "#ffee00";
+                                    break;
+                            }
+                        }
+                        <span class="badge badge-pill" style="background-color: @seveirtyBackgroundColor; color: black;">@bug.Severity</span>
+                    </td>
+                    <td>@bug.EnteredDate.ToShortDateString()</td>
+                    <td>@bug.DueDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts{
+    <script src="~/js/projectBugs.js"></script>
+ }

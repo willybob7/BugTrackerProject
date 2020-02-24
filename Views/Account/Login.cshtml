@@ -1,0 +1,99 @@
+﻿@model LoginViewModel
+
+@{
+    ViewBag.Title = "User Login";
+}
+
+
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>Local Account Login</h1>
+        <hr />
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label asp-for="RememberMe">
+                        <input asp-for="RememberMe" />
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+            <div>
+                <a asp-action="ForgotPassword">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h1>Demo Logins</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <a href="@Url.Action("LoginDemoAccount", "Account", new {id = "4359dc51-dbe8-4216-a601-c25bb55c7062"})">
+                        <img class="demoLoginPic" src="~/images/Admin.png" />
+                        <p class="demoButton text-center btn btn-primary d-block w-50">Admin</p>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="@Url.Action("LoginDemoAccount", "Account", new {id = "8857aecd-c021-458c-a732-739b27fda2a7"})">
+                        <img class="demoLoginPic" src="~/images/Manager.png" />
+                        <p class="demoButton text-center btn btn-primary d-block w-50">Manager</p>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <a href="@Url.Action("LoginDemoAccount", "Account", new {id = "aba1b373-0ec5-45a5-afc4-95000350ddbf"})">
+                        <img class="demoLoginPic" src="~/images/Developer.png" />
+                        <p class="demoButton text-center btn btn-primary d-block w-50">Developer</p>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="@Url.Action("LoginDemoAccount", "Account", new {id = "7de9f1d2-7c68-462f-a9b9-5f3a001d3316"})">
+                        <img class="demoLoginPic" src="~/images/User.png" />
+                        <p class="demoButton text-center btn btn-primary d-block w-50">User</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+        @*For when I set up external login providers*@
+        @*<h1>External Logins</h1>
+        <hr />
+        @{
+            if (Model.ExternalLogins.Count == 0)
+            {
+                <div>No external logins configured</div>
+            }
+            else
+            {
+                <form method="post" asp-action="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
+                    <div>
+                        @foreach (var provider in Model.ExternalLogins)
+                        {
+                            <button type="submit" class="btn btn-primary" style="width:auto"
+                                    name="provider" value="@provider.Name"
+                                    title="Log in using your @provider.DisplayName account">
+                                @provider.DisplayName
+                            </button>
+                        }
+                    </div>
+                </form>
+            }
+        }*@
+    </div>
+</div>

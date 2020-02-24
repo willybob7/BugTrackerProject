@@ -1,0 +1,23 @@
+﻿Need to do:
+
+set up demo accounts
+
+then publish!!!!!!!!!!!
+
+
+Nice to have:
+
+you could store the side panel status in the local storage.
+Make it so that the user can remove the comments and screenshots that they add
+validation for picture uploads and date entering
+search and sort functionality for bugs
+Preview/crop pictures before uploading
+upload picture to storage/resize them (possibly firebase like I did before)
+	and then somehow get a date sent to the view to show when the picture was added
+	use an image processing library to make a thumbnail and then use that as the link to the slideshow
+	this will probably all be possible with adding an image storage somewhere
+Make a feed page that shows the events that have happened in the project and allows you to 
+	add comments about each happening
+
+
+

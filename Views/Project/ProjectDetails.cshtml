@@ -1,0 +1,261 @@
+﻿@model ProjectDetailsAndAssociatedBugs
+@inject IAuthorizationService AuthorizationService
+
+@{
+    Layout = "~/Views/Shared/_ProjectLayout.cshtml";
+    var bugStatusListString = "";
+    var bugSeverityListString = "";
+    var projectHistoriesSortedByDueDate = Model.projectHistories.OrderByDescending(d => d.DateChanged);
+}
+
+    <form action="@Url.Action("projectdetails", "project")" enctype="multipart/form-data" method="post" class="container">
+        <div class="row form-group mt-3">
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded)
+            {
+                <input asp-for="@Model.Project.ProjectName" class="form-control-lg col-form-label bg-dark text-info" id="projectName" style="font-size: x-large;" placeholder="Name" />
+                <span asp-validation-for="@Model.Project.ProjectName" class="text-danger"></span>
+            }
+            else
+            {
+                <input disabled asp-for="@Model.Project.ProjectName" class="form-control-lg col-form-label bg-dark text-info" id="projectName" style="font-size: x-large;" placeholder="Name" />
+            }
+
+        </div>
+        <div class="form-group row ">
+            <div class="col-sm-6 col-md-5 col-lg-4 col-xl-3">
+                <label asp-for="@Model.Project.ProjectStatus" class="col-form-label" style="color: #3498DB;font-size:x-small"></label>
+
+                @if ((await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded)
+                {
+                    <select asp-for="@Model.Project.ProjectStatus" id="projectStatus" class="form-control " style="color: black; font-size:x-small">
+                        <option value="0" style="background:#00bc8c;color: black">Project Status: Active</option>
+                        <option value="1" style="background:#3498DB;color: black">Project Status: On Track</option>
+                        <option value="2" style="background:#E74C3C;color: black">Project Status: Delayed</option>
+                        <option value="3" style="background:#F39C12;color: black">Project Status: In Testing</option>
+                        <option value="4" style="background:#444; color: #3498DB;">Project Status: On Hold</option>
+                        <option value="5" style="background:#303030; color: #3498DB;">Project Status: Cancelled</option>
+                        <option value="6" style="background:#999;color: black">Project Status: In Planning</option>
+                        <option value="7" style="background:#375a7f;color: black">Project Status: Completed</option>
+                    </select>
+                    <span asp-validation-for="@Model.Project.ProjectStatus" class="text-danger"></span>
+                }
+                else
+                {
+                    <select disabled asp-for="@Model.Project.ProjectStatus" id="projectStatus" class="form-control " style="color: black; font-size:x-small">
+                        <option value="0" style="background:#00bc8c;color: black">Project Status: Active</option>
+                        <option value="1" style="background:#3498DB;color: black">Project Status: On Track</option>
+                        <option value="2" style="background:#E74C3C;color: black">Project Status: Delayed</option>
+                        <option value="3" style="background:#F39C12;color: black">Project Status: In Testing</option>
+                        <option value="4" style="background:#444; color: #3498DB;">Project Status: On Hold</option>
+                        <option value="5" style="background:#303030; color: #3498DB;">Project Status: Cancelled</option>
+                        <option value="6" style="background:#999;color: black">Project Status: In Planning</option>
+                        <option value="7" style="background:#375a7f;color: black">Project Status: Completed</option>
+                    </select>
+                    @*<input disabled asp-for="@Model.Project.ProjectStatus" class="form-control bg-dark" style="color: #3498DB; font-size:x-small" />*@
+                }
+
+
+
+
+                <label asp-for="@Model.Project.OwnerId" class="col-form-label" style="color: #3498DB;font-size:x-small"></label>
+                <input disabled asp-for="@Model.Project.OwnerUserName" class="form-control bg-dark" style="color: #3498DB; font-size:x-small" id="exampleSelect1" />
+                <input hidden asp-for="@Model.Project.OwnerId" />
+                <input hidden asp-for="@Model.Project.OwnerUserName" />
+                <input hidden asp-for="@Model.Project.UsersAssigned" />
+                <span asp-validation-for="@Model.Project.OwnerId" class="text-danger"></span>
+
+                @if ((await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded)
+                {
+                    <label asp-for="@Model.Project.StartDate" class=" col-form-label" style="color: #3498DB;font-size:x-small"></label>
+                    <input asp-for="@Model.Project.StartDate" class="form-control bg-dark" style="color: #3498DB;font-size:x-small" type="date" placeholder="Start Date" />
+                    <span asp-validation-for="@Model.Project.StartDate" class="text-danger"></span>
+
+                    <label asp-for="@Model.Project.EndDate" class=" col-form-label" style="color: #3498DB;font-size:x-small"></label>
+                    <input asp-for="@Model.Project.EndDate" class="form-control bg-dark" style="color: #3498DB;font-size:x-small" type="date" placeholder="End Date" />
+                    <span asp-validation-for="@Model.Project.EndDate" class="text-danger"></span>
+                }
+                else
+                {
+                    <label asp-for="@Model.Project.StartDate" class=" col-form-label" style="color: #3498DB;font-size:x-small"></label>
+                    <input disabled asp-for="@Model.Project.StartDate" class="form-control bg-dark" style="color: #3498DB; font-size:x-small" />
+
+                    <label asp-for="@Model.Project.EndDate" class=" col-form-label" style="color: #3498DB;font-size:x-small"></label>
+                    <input disabled asp-for="@Model.Project.EndDate" class="form-control bg-dark" style="color: #3498DB; font-size:x-small" />
+                }
+
+
+            </div>
+            <div class="col-sm-6 col-md-7 col-lg-8 col-xl-9">
+                <label asp-for="@Model.Project.ProjectDescription" class="col-form-label" style="color: #3498DB;"></label>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded)
+                {
+                    <textarea asp-for="@Model.Project.ProjectDescription" class="form-control bg-dark" style="color: #3498DB; height: 150px;" placeholder="Enter a description"></textarea>
+                }
+                else
+                {
+                    <textarea disabled asp-for="@Model.Project.ProjectDescription" class="form-control bg-dark" style="color: #3498DB; height: 150px;" placeholder="Enter a description"></textarea>
+
+                }
+                <span asp-validation-for="@Model.Project.ProjectDescription" class="text-danger"></span>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded || (await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+                {
+                    <button type="submit" class="d-block btn btn-primary ml-auto mt-3">Submit Changes</button>
+                }
+
+            </div>
+
+        </div>
+
+
+
+        <input class="d-none" style="visibility:hidden;" asp-for="@Model.Project.ProjectId" />
+
+        @*<div class="form-group row"> Maybe, when I convince myself do allow uploading of files for projects
+            <label asp-for="ScreenShots" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <div class="custom-file">
+                    <input multiple asp-for="ScreenShots" class="form-control custom-file-input" />
+                    <label class="custom-file-label">Choose File...</label>
+                </div>
+            </div>
+        </div>*@
+
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="container-fluid">
+            @for (var i = 0; i < Model.ProjectBugs.Count(); i++)
+            {
+                if (i == Model.ProjectBugs.Count() - 1)
+                {
+                    bugStatusListString += Model.ProjectBugs.ElementAt(i).Status.ToString();
+                    bugSeverityListString += Model.ProjectBugs.ElementAt(i).Severity.ToString();
+                }
+                else
+                {
+                    bugStatusListString += Model.ProjectBugs.ElementAt(i).Status.ToString() + " ";
+                    bugSeverityListString += Model.ProjectBugs.ElementAt(i).Severity.ToString() + " ";
+                }
+
+            }
+
+
+
+            <span class="d-none" id="bug-status" style="visibility:hidden" data-bugStatus="@bugStatusListString"></span>
+            <span class="d-none" id="bug-severity" style="visibility:hidden" data-bugSeverity="@bugSeverityListString"></span>
+
+            <div class="row">
+                <div class="card col-lg m-2 shadow ">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold text-info">Bug Status</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-pie pt-4">
+                            <canvas id="bugStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card col-lg m-2 shadow">
+                    <div class="card-header py-3">
+                        <h4 class="m-0 font-weight-bold text-info">Bug Severity</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-pie pt-4">
+                            <canvas id="bugSeverityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="form-group col">
+            <h4>Project History</h4>
+            <table class="table table-hover table-borderless table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Property Changed</th>
+                        <th scope="col">Old Value</th>
+                        <th scope="col">New Value</th>
+                        <th scope="col">Date Changed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var projectHistory in projectHistoriesSortedByDueDate)
+                    {
+                        <tr class="projectHistory">
+                            <td>@projectHistory.Property</td>
+                            @if (projectHistory.OldValue.Length >= 15)
+                            {
+                                <td><button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="@projectHistory.OldValue">Old Value</button></td>
+                            }
+                            else
+                            {
+                                <td>@projectHistory.OldValue</td>
+                            }
+
+                            @if (projectHistory.NewValue.Length >= 15)
+                            {
+                                <td><button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="@projectHistory.NewValue">New Value</button></td>
+                            }
+                            else
+                            {
+                                <td>@projectHistory.NewValue</td>
+
+                            }
+                            <td>@projectHistory.DateChanged</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+
+
+
+        @*@section Scripts{
+            <script>
+        $(document).ready(function () {
+            $(".custom-file-input").on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next(".custom-file-label").html(fileName);
+            })
+        })
+            </script>
+        }*@
+
+
+        @if ((await AuthorizationService.AuthorizeAsync(User, "AdminPolicy")).Succeeded)
+        {
+            <button type="button" id="deleteButton" class="btn btn-danger">Delete Project</button>
+
+            <div class="container">
+                <div id="deleteAlert" class="row alert alert-dismissible alert-warning " style="display: none; font-size:x-large">
+                    <button type="button" id="deleteAlertClose" class="close">&times;</button>
+                    <strong style="color: black">Are you sure you want to delete the project?</strong>
+                    <p style="color: black">Type the name of the project here</p>
+                    <input class="col" id="deletePhrase" type="text" />
+                    <a class="btn btn-danger mt-3" id="delete" style="display: none" href="@Url.Action("deleteproject", "project", new { projectId = Model.Project.ProjectId})">Delete</a>
+                </div>
+            </div>
+
+        }
+
+
+
+
+
+
+    </form>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+
+    </script>
+    <script src="~/js/projectDetails.js"></script>
+}
