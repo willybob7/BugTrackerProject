@@ -79,25 +79,25 @@ namespace BugTrackerProject.Controllers
 
         public async Task<IActionResult> RemoveUserFromProject(string userId, int projectId)
         {
-
-
             var project = projectRepository.GetProject(projectId);
 
             var usersAssignedToProject = project.UsersAssigned.Split(" ").ToList();
 
-            foreach (var user in usersAssignedToProject)
+            for (var i = 0; i < usersAssignedToProject.Count; i++)
             {
-                if (user == userManager.GetUserId(HttpContext.User))
+                if (usersAssignedToProject[i] == userManager.GetUserId(HttpContext.User))
                 {
                     return RedirectToAction("AccessDenied", "Account");
                 }
 
 
-                if (user == userId)
+                if (usersAssignedToProject[i] == userId)
                 {
-                    usersAssignedToProject.Remove(user);
-                    break;
+                    usersAssignedToProject.Remove(usersAssignedToProject[i]);
+                    i--;
                 }
+
+
             }
 
             project.UsersAssigned = String.Join(" ", usersAssignedToProject);
@@ -197,6 +197,8 @@ namespace BugTrackerProject.Controllers
 
             foreach (var userId in userList)
             {
+
+                //figure out why a person is being added a bunch of times here to the project.UsersAssigned
 
                 if(project.UsersAssigned == null)
                 {
@@ -422,7 +424,7 @@ namespace BugTrackerProject.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "ManagerPolicy")]
+        //[Authorize(Policy = "ManagerPolicy")]
 
         public async Task<IActionResult> ManageUserClaims(string userId, int projectId)
         {

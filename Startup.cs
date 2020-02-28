@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using BugTrackerProject.Security;
 using NETCore.MailKit.Infrastructure.Internal;
 using NETCore.MailKit.Extensions;
+using SignalRChat.Hubs;
+
 
 namespace BugTrackerProject
 {
@@ -111,6 +113,9 @@ namespace BugTrackerProject
             services.AddTransient<IAuthorizationHandler, ManagerLevel>();
             services.AddTransient<IAuthorizationHandler, AdministratorLevel>();
 
+            services.AddSignalR();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -139,6 +144,8 @@ namespace BugTrackerProject
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<ChatHub>("/chatHub");
+
             });
         }
     }

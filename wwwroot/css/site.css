@@ -145,6 +145,10 @@ body {
     padding: 0.2rem;
 }
 
+.projectHistory {
+    overflow-y: scroll;
+}
+
 
 .screenshot {
     height: 100px;
@@ -181,17 +185,23 @@ body {
 
 #deleteAlert {
     position: fixed;
-    top: 40vh;
+    top: 2vh;
     left: 30vw;
     border: solid red 4px;
     max-width: 95vw;
-    z-index: 2;
+    z-index: 502;
+}
+
+#deleteAlertClose{
+    color:black;
+    opacity: 1;
+       
 }
 
 
 @media (max-width: 768px) {
     #deleteAlert {
-        left: 5vw;
+        left: 4vw;
     }
 
     .deleteScreenShot {

@@ -206,7 +206,7 @@ $(document).ready(function () {
         var formAction = $(this).attr("action");
         var fdata = new FormData();
         var markupStr = $('#summernote').summernote('code');
-        var userId = document.getElementById("userId").value;
+        var userId = document.getElementById("userName").value;
         var associatedProject = document.getElementById("associatedProjectId").value;
         var bugId = document.getElementById("bugId").value;
         fdata.append("comment", markupStr);
@@ -276,7 +276,7 @@ $(document).ready(function () {
             commentSection.insertAdjacentHTML("beforeend",
                 `<div class="comment" id="comment${commentId}">
                     <hr style="height:1px; border:none; color:rgb(52, 152, 219); background-color:rgb(52, 152, 219);">
-                    <div>User Id: ${userId}</div>
+                    <div>User: ${userId}</div>
                     <div id="comment${commentId}updateSection">${comment}</div>
                     <div class="justify-content-between" style="display:flex;"><p>${formatDate(new Date(createdDate))}</p>
                         <span>
@@ -301,7 +301,7 @@ $(document).ready(function () {
             commentSection.insertAdjacentHTML("beforeend",
                 `<div class="comment" id="comment${commentId}">
                     <hr style="height:1px; border:none; color:rgb(52, 152, 219); background-color:rgb(52, 152, 219);">
-                    <div>User Id: ${userId}</div>
+                    <div>User: ${userId}</div>
                     <div id="comment${commentId}updateSection">${comment}</div>
                     <div class="justify-content-between" style="display:flex;">
                         <p>${formatDate(new Date(createdDate))}</p>
@@ -379,7 +379,7 @@ $(document).ready(function () {
             var fdata = new FormData();
             var markupStr = $(sectionSelector).summernote('code');
             var action = document.getElementById(`save${commentId}`).getAttribute("data-updateUrl")
-            var userId = document.getElementById("userId").value;
+            var userId = document.getElementById("userName").value;
             var associatedProject = document.getElementById("associatedProjectId").value;
             var bugId = document.getElementById("bugId").value;
             fdata.append("comment", markupStr);
@@ -416,6 +416,38 @@ $(document).ready(function () {
 
         })
     }
+
+    //"use strict";
+
+    //var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+    ////Disable send button until connection is established
+    //document.getElementById("sendButton").disabled = true;
+
+    //connection.on("ReceiveMessage", function (user, message) {
+    //    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    //    var encodedMsg = user + " says " + msg;
+    //    var li = document.createElement("li");
+    //    li.textContent = encodedMsg;
+    //    document.getElementById("messagesList").appendChild(li);
+    //});
+
+    //connection.start().then(function () {
+    //    document.getElementById("sendButton").disabled = false;
+    //}).catch(function (err) {
+    //    return console.error(err.toString());
+    //});
+
+    //document.getElementById("sendButton").addEventListener("click", function (event) {
+    //    var user = document.getElementById("userInput").value;
+    //    var message = document.getElementById("messageInput").value;
+    //    connection.invoke("SendMessage", user, message).catch(function (err) {
+    //        return console.error(err.toString());
+    //    });
+    //    event.preventDefault();
+    //});
+
+
 
 });
 

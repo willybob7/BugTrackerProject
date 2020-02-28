@@ -170,7 +170,7 @@
         </div>
 
 
-        <div class="form-group col">
+        <div class="form-group col projectHistory" id="style-7">
             <h4>Project History</h4>
             <table class="table table-hover table-borderless table-striped">
                 <thead>
@@ -184,7 +184,7 @@
                 <tbody>
                     @foreach (var projectHistory in projectHistoriesSortedByDueDate)
                     {
-                        <tr class="projectHistory">
+                        <tr >
                             <td>@projectHistory.Property</td>
                             @if (projectHistory.OldValue.Length >= 15)
                             {
@@ -251,9 +251,9 @@
     </form>
 @section Scripts{
     <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+        //$(document).ready(function () {
+        //    $('[data-toggle="tooltip"]').tooltip()
+        //})
 
 
     </script>

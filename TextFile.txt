@@ -1,8 +1,13 @@
 ﻿Need to do:
 
-set up demo accounts
 
-then publish!!!!!!!!!!!
+
+fix the delete bug and delete project button popup
+	summernot z-index
+https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr?view=aspnetcore-3.1&tabs=visual-studio
+implement signalR for the comment system
+implement signalR for bugs
+implement signalR for projects
 
 
 Nice to have:
@@ -18,6 +23,7 @@ upload picture to storage/resize them (possibly firebase like I did before)
 	this will probably all be possible with adding an image storage somewhere
 Make a feed page that shows the events that have happened in the project and allows you to 
 	add comments about each happening
+
 
 
 

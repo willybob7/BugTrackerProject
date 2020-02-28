@@ -35,7 +35,7 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "UserPolicy")]
-        public IActionResult UploadComment(string comment, int userId, int associatedProject, int associatedBug)
+        public IActionResult UploadComment(string comment, string userId, int associatedProject, int associatedBug)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "ManagerPolicy")]
-        public IActionResult UpdateComment(string comment, int userId, int associatedProject, int associatedBug, int commentId)
+        public IActionResult UpdateComment(string comment, string userId, int associatedProject, int associatedBug, int commentId)
         {
             try
             {
