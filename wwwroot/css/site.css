@@ -173,6 +173,7 @@ body {
     border: solid #3498DB 2px;
     border-radius: 5px;
     z-index: 0;
+    display:inline;
 }
 .screenshotdiv:hover .deleteScreenShot {
     opacity: 1;
@@ -190,6 +191,7 @@ body {
     border: solid red 4px;
     max-width: 95vw;
     z-index: 502;
+    
 }
 
 #deleteAlertClose{
@@ -199,7 +201,7 @@ body {
 }
 
 
-@media (max-width: 768px) {
+@media only screen and (max-width: 768px) {
     #deleteAlert {
         left: 4vw;
     }
@@ -210,28 +212,36 @@ body {
     }
 }
 
-#style-7::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    background-color: #303030;
-    border-radius: 10px;
+@media only screen and (max-width: 1024px) {
+    .deleteScreenShot{
+        display: none;
+    }
 }
 
-#style-7::-webkit-scrollbar {
-    /*width: 10px;*/
-    background-color: #303030;
-}
 
-#style-7::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.72, rgb(73,125,189)), color-stop(0.86, rgb(28,58,148)));
-}
+    #style-7::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #303030;
+        border-radius: 10px;
+    }
 
-.demoLoginPic {
-    height: 200px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-.demoButton {
-    margin: 0 auto 0 auto;
-}
+    #style-7::-webkit-scrollbar {
+        /*width: 10px;*/
+        background-color: #303030;
+    }
+
+    #style-7::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.72, rgb(73,125,189)), color-stop(0.86, rgb(28,58,148)));
+    }
+
+    .demoLoginPic {
+        height: 200px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .demoButton {
+        margin: 0 auto 0 auto;
+    }

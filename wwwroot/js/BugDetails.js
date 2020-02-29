@@ -200,13 +200,38 @@ $(document).ready(function () {
     document.getElementById("summernote").innerHTML = "";
     $('#summernote').summernote();
 
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    document.getElementById("sendButton").disabled = true;
+
+    connection.start().then(function () {
+        console.log("connection started");
+        document.getElementById("sendButton").disabled = false;
+
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+
+    connection.on("ReceiveMessage", function (user, message) {
+
+        message = message.split("%%%");
+        comment = message[0];
+        createdDate = message[1];
+        userId = message[2];
+        commentId = message[3];
+        actionUrl = message[4];
+
+        addComment(comment, createdDate, userId, commentId, actionUrl)
+    });
+
+
     $("#commentForm").submit(function (e) {
         e.preventDefault();
 
         var formAction = $(this).attr("action");
         var fdata = new FormData();
         var markupStr = $('#summernote').summernote('code');
-        var userId = document.getElementById("userName").value;
+        var userId = document.getElementById("currentUserName").value;
         var associatedProject = document.getElementById("associatedProjectId").value;
         var bugId = document.getElementById("bugId").value;
         fdata.append("comment", markupStr);
@@ -221,7 +246,14 @@ $(document).ready(function () {
             contentType: false,
         }).done(function (result) {
             if (result.status === "success") {
-                addComment(result.comment, result.createdDate, result.userId, result.commentId, result.actionUrl)
+                //addComment(result.comment, result.createdDate, result.userId, result.commentId, result.actionUrl)
+                //Im using %%% as a delimiter so I can run the addComment only once, not twice
+                var message = result.comment + "%%%" + result.createdDate + "%%%" + result.userId + "%%%"
+                    + result.commentId + "%%%" + result.actionUrl;
+                connection.invoke("SendMessage", userId, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            //event.preventDefault();
                 $('#summernote').summernote('reset');
             } else {
                 console.log(result.message);
@@ -268,6 +300,9 @@ $(document).ready(function () {
         // join the components into date
         return d.slice(0, 3).join('.') + ' ' + d.slice(3,5).join(':') + timeOfDay;
     }
+
+   
+
 
     function addComment(comment, createdDate, userId, commentId, actionUrl) {
         var commentSection = document.getElementById("comments");
@@ -364,7 +399,6 @@ $(document).ready(function () {
         var sectionSelector = "#" + e.target.parentNode.getAttribute("id") + "Section"
         $(sectionSelector).summernote({ focus: true });
         var commentId = sectionSelector.match(/(\d+)/)[0]; 
-        //var commentId = sectionSelector.match(/(\d+)/); 
 
         var clearButton = document.getElementById(`save${commentId}`)
         if (clearButton != null) {
@@ -379,7 +413,7 @@ $(document).ready(function () {
             var fdata = new FormData();
             var markupStr = $(sectionSelector).summernote('code');
             var action = document.getElementById(`save${commentId}`).getAttribute("data-updateUrl")
-            var userId = document.getElementById("userName").value;
+            var userId = document.getElementById("currentUserName").value;
             var associatedProject = document.getElementById("associatedProjectId").value;
             var bugId = document.getElementById("bugId").value;
             fdata.append("comment", markupStr);

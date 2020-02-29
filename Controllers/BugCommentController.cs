@@ -39,7 +39,7 @@ namespace BugTrackerProject.Controllers
         {
             try
             {
-                var uploadedComment = new Comment
+                Comment uploadedComment = new Comment
                 {
                     AssociatedBugId = associatedBug,
                     ProjectId = associatedProject,

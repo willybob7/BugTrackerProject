@@ -1,11 +1,7 @@
 ﻿Need to do:
-
-
-
-fix the delete bug and delete project button popup
-	summernot z-index
-https://docs.microsoft.com/en-us/aspnet/core/tutorials/signalr?view=aspnetcore-3.1&tabs=visual-studio
-implement signalR for the comment system
+implement signalR for the comment system- done! (really cool!!)
+	maybe do a hub just for time on the comment 
+	
 implement signalR for bugs
 implement signalR for projects
 
@@ -23,6 +19,7 @@ upload picture to storage/resize them (possibly firebase like I did before)
 	this will probably all be possible with adding an image storage somewhere
 Make a feed page that shows the events that have happened in the project and allows you to 
 	add comments about each happening
+Make it so that a comment can only be edited by the creator, but able to be deleted by the admin/manager
 
 
 

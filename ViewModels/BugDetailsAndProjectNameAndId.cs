@@ -20,7 +20,6 @@ namespace BugTrackerProject.ViewModels
         public List<IFormFile> ScreenShots { get; set; }
         public List<BugHistory> bugHistories { get; set; }
         public List<IdentityUser> ProjectUsers { get; set; }
-
-
+        public string CurrentUserName { get; set; }
     }
 }

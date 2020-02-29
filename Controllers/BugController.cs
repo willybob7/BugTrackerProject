@@ -207,7 +207,8 @@ namespace BugTrackerProject.Controllers
                 Updated = 0,
                 Src = new List<ScreenShots>(),
                 bugHistories = bugHistory,
-                ProjectUsers = users
+                ProjectUsers = users,
+                CurrentUserName = HttpContext.User.Identity.Name
             };
 
             if (screenShots != null)
