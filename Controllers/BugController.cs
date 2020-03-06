@@ -191,7 +191,10 @@ namespace BugTrackerProject.Controllers
             var users = new List<IdentityUser>();
             var projectUsers = new List<string>();
             projectUsers.Add(project.OwnerId);
-            projectUsers.AddRange(project.UsersAssigned.Split(" ").ToList());
+            if (project.UsersAssigned != null)
+            {
+                projectUsers.AddRange(project.UsersAssigned.Split(" ").ToList());
+            }
 
             foreach (var userId in projectUsers)
             {
@@ -345,7 +348,10 @@ namespace BugTrackerProject.Controllers
             var users = new List<IdentityUser>();
             var projectUsers = new List<string>();
             projectUsers.Add(project.OwnerId);
-            projectUsers.AddRange(project.UsersAssigned.Split(" ").ToList());
+            if (project.UsersAssigned != null)
+            {
+                projectUsers.AddRange(project.UsersAssigned.Split(" ").ToList());
+            }
 
             foreach (var userId in projectUsers)
             {
