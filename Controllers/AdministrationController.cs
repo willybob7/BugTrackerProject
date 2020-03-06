@@ -52,9 +52,12 @@ namespace BugTrackerProject.Controllers
 
             var projectUsers = new List<string>();
             projectUsers.Add(project.OwnerId);
-            projectUsers.AddRange(project.UsersAssigned.Split(" ").ToList());
+            if (project.UsersAssigned != null)
+            {
+                projectUsers.AddRange(project.UsersAssigned.Split(" ").ToList());
+            }
 
-            foreach(var userId in projectUsers)
+            foreach (var userId in projectUsers)
             {
                 var user = await userManager.FindByIdAsync(userId);
                 if (user != null && !users.Contains(user))
