@@ -23,8 +23,6 @@ namespace BugTrackerProject.Controllers
 {
     public class BugController : Controller
     {
-
-
         private readonly ILogger<BugController> _logger;
         private readonly IBugRepository _bugRepository;
         private readonly IProjectRepository _projectRepository;
@@ -43,11 +41,6 @@ namespace BugTrackerProject.Controllers
             this.hostingEnvironment = hostingEnvironment;
             this.userManager = userManager;
         }
-
-
-
-
-
 
         [HttpGet]
         //[Authorize(Policy = "UserPolicy")]
@@ -246,11 +239,6 @@ namespace BugTrackerProject.Controllers
             return View(viewModel);
         }
 
-
-
-       
-
-
         [HttpPost]
         [Authorize(Policy = "UserPolicy")]
         public async Task<IActionResult> BugDetails(BugDetailsAndProjectNameAndId updatedBug)
@@ -283,6 +271,11 @@ namespace BugTrackerProject.Controllers
             }
 
             var originalBug = _bugRepository.GetBug(updatedBug.Bug.BugId);
+
+            if (updatedBug.Bug.Title == null)
+            {
+                updatedBug.Bug.Title = originalBug.Title;
+            }
 
             var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(HttpContext.User.Claims.ToList(), updatedBug.Bug.AssociatedProject);
 
@@ -362,8 +355,6 @@ namespace BugTrackerProject.Controllers
                 }
             }
 
-
-
             var viewModel = new BugDetailsAndProjectNameAndId()
             {
                 Bug = bug,
@@ -374,8 +365,6 @@ namespace BugTrackerProject.Controllers
                 bugHistories = bugHistory,
                 ProjectUsers = users
             };
-
-
 
             //if (updatedBug.Bug.ScreenShots != null)
             if (bug.ScreenShots != null)
@@ -414,11 +403,5 @@ namespace BugTrackerProject.Controllers
             var bug = _bugRepository.Delete(bugId);
             return RedirectToAction("ProjectBugs", "Project", new { projectId = bug.AssociatedProject });
         }
-
-
-
-
-
-
     }
 }
