@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using BugTrackerProject.Storage;
 
 namespace BugTrackerProject.Models
 {
@@ -16,13 +17,17 @@ namespace BugTrackerProject.Models
         private readonly AppDbContext context;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IFirebaseFileStorage firebaseFileStorage;
 
-        public SqlProjectRepository(AppDbContext context, RoleManager<IdentityRole> roleManager,
-            UserManager<IdentityUser> userManager)
+        public SqlProjectRepository(AppDbContext context, 
+            RoleManager<IdentityRole> roleManager,
+            UserManager<IdentityUser> userManager,
+            IFirebaseFileStorage firebaseFileStorage)
         {
             this.context = context;
             this.roleManager = roleManager;
             this.userManager = userManager;
+            this.firebaseFileStorage = firebaseFileStorage;
         }
         public ProjectAttributes Add(ProjectAttributes project)
         {
@@ -52,11 +57,15 @@ namespace BugTrackerProject.Models
                     var associatedScreenshots = context.ScreenShots.Where(s => bug.BugId == s.AssociatedBug);
                     foreach (var file in associatedScreenshots)
                     {
-                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", file.FilePath);
-                        if (File.Exists(path))
-                        {
-                            File.Delete(path);
-                        }
+
+                        firebaseFileStorage.Delete(file.FileName);
+
+
+                        //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", file.Url);
+                        //if (File.Exists(path))
+                        //{
+                        //    File.Delete(path);
+                        //}
 
                         context.ScreenShots.Remove(file);
                     }

@@ -149,10 +149,14 @@ body {
     overflow-y: scroll;
 }
 
+.screenShotButtonDiv{
+    display: flex;
+    margin-bottom: 30px;
+}
 
 .screenshot {
     height: 100px;
-    border: #3498DB solid 2px;
+    /*    border: #3498DB solid 2px;*/
     border-radius: 7px;
     margin-bottom: 3px;
     margin-right: -20px;
@@ -180,8 +184,35 @@ body {
     z-index: 2;
 }
 
-.spacer{
-    width:1px;
+.preview{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imagePreview{
+    margin: 3px;
+    width: 32%;
+}
+
+#addBugFormSubmit{
+    cursor: pointer;
+}
+
+#screenShotInput {
+    cursor: pointer;
+}
+
+.clearPictures {
+    cursor: pointer;
+    display: none;
+    justify-content: center;
+}
+
+
+
+.spacer {
+    width: 1px;
 }
 
 #deleteAlert {
@@ -213,8 +244,11 @@ body {
 }
 
 @media only screen and (max-width: 1024px) {
-    .deleteScreenShot{
+   /* .deleteScreenShot{
         display: none;
+    }*/
+    .screenshot{
+        margin-right: 0
     }
 }
 

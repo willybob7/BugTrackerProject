@@ -14,7 +14,7 @@ namespace BugTrackerProject.ViewModels
     {
         public BugAttributes NewBugAttributes { get; set; }
         [Display(Name = "Add A Screenshot")]
-        public List<IFormFile> ScreenShots { get; set; }
+        //public List<IFormFile> ScreenShots { get; set; }
         public int ProjectId { get; set; }
         public List<IdentityUser> ProjectUsers { get; set; }
 

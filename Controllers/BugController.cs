@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BugTrackerProject.Models;
 using BugTrackerProject.ViewModels;
-using Microsoft.CodeAnalysis;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using BugTrackerProject.Models.SubModels;
 using System.Drawing.Imaging;
 using System.Drawing;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using BugTrackerProject.Security;
+using BugTrackerProject.Storage;
+using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace BugTrackerProject.Controllers
 {
@@ -29,10 +29,12 @@ namespace BugTrackerProject.Controllers
         //private readonly int _currentUserId;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly IFirebaseFileStorage firebaseFileStorage;
 
         public BugController(ILogger<BugController> logger,
            IBugRepository bugRepository, IProjectRepository projectRepository,
-           IWebHostEnvironment hostingEnvironment, UserManager<IdentityUser> userManager)
+           IWebHostEnvironment hostingEnvironment, UserManager<IdentityUser> userManager,
+           IFirebaseFileStorage firebaseFileStorage)
         {
             _logger = logger;
             _bugRepository = bugRepository;
@@ -40,6 +42,7 @@ namespace BugTrackerProject.Controllers
             //_currentUserId = 2;
             this.hostingEnvironment = hostingEnvironment;
             this.userManager = userManager;
+            this.firebaseFileStorage = firebaseFileStorage;
         }
 
         [HttpGet]
@@ -127,24 +130,14 @@ namespace BugTrackerProject.Controllers
                 };
                 _projectRepository.AddProjectBugs(projectBug);
 
+
                 List<ScreenShots> uniqueFileNames = new List<ScreenShots>();
-                if (newbug.ScreenShots != null && newbug.ScreenShots.Count > 0)
+                if (GlobalVar.InitialScreenShots == true)
                 {
-                    foreach (var file in newbug.ScreenShots)
-                    {
-                        var uniqueFileName = "";
-                        string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "screenshots");
-                        uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                        uniqueFileNames.Add(new ScreenShots { FilePath = uniqueFileName, AssociatedBug = bug.BugId });
-                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                        using (var stream = System.IO.File.Create(filePath))
-                        {
-                            file.CopyTo(stream);
-                        }
-
-                    }
+                    uniqueFileNames = await UploadScreenShotsToStorage(bug.BugId);
                 }
+
+                GlobalVar.InitialScreenShots = false;
                 _bugRepository.AddScreenShots(uniqueFileNames);
                 return RedirectToAction("BugDetails", new { bugId = bug.BugId });
             }
@@ -157,7 +150,6 @@ namespace BugTrackerProject.Controllers
         //[Authorize(Policy = "UserPolicy")]
         public async Task<IActionResult> BugDetails(int bugId)
         {
-
 
             var bug = _bugRepository.GetBug(bugId);
 
@@ -204,38 +196,38 @@ namespace BugTrackerProject.Controllers
                 ProjectName = projectName,
                 ProjectId = bug.AssociatedProject,
                 Updated = 0,
-                Src = new List<ScreenShots>(),
+                Src = screenShots,
                 bugHistories = bugHistory,
                 ProjectUsers = users,
                 CurrentUserName = HttpContext.User.Identity.Name
             };
 
-            if (screenShots != null)
-            {
-                foreach (var path in screenShots)
-                {
-                    var imgPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", path.FilePath);
+            //if (screenShots != null)
+            //{
+            //    foreach (var path in screenShots)
+            //    {
+            //      var imgPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", path.FilePath);
 
-                    using (FileStream stream = new FileStream(imgPath, FileMode.Open, FileAccess.Read))
-                    {
-                        var image = Image.FromStream(stream);
+            //        using (FileStream stream = new FileStream(imgPath, FileMode.Open, FileAccess.Read))
+            //        {
+            //            var image = Image.FromStream(stream);
 
-                        using (var mStream = new MemoryStream())
-                        {
-                            image.Save(mStream, ImageFormat.Jpeg);
-                            var byteData = mStream.ToArray();
-                            string imreBase64Data = Convert.ToBase64String(byteData);
-                            string imgDataURL = $"data:image/{path.FilePath.Split(".")[1]};base64,{imreBase64Data}";
-                            viewModel.Src.Add(new ScreenShots
-                            {
-                                id = path.id,
-                                AssociatedBug = path.AssociatedBug,
-                                FilePath = imgDataURL
-                            });
-                        }
-                    }
-                }
-            }
+            //            using (var mStream = new MemoryStream())
+            //            {
+            //                image.Save(mStream, ImageFormat.Jpeg);
+            //                var byteData = mStream.ToArray();
+            //                string imreBase64Data = Convert.ToBase64String(byteData);
+            //                string imgDataURL = $"data:image/{path.FilePath.Split(".")[1]};base64,{imreBase64Data}";
+            //                viewModel.Src.Add(new ScreenShots
+            //                {
+            //                    id = path.id,
+            //                    AssociatedBug = path.AssociatedBug,
+            //                    FilePath = imgDataURL
+            //                });
+            //            }
+            //        }
+            //    }
+            //}
             return View(viewModel);
         }
 
@@ -252,23 +244,14 @@ namespace BugTrackerProject.Controllers
                 updatedBug.Bug.AssingeeUserName = assignedUser.UserName;
             }
 
-
             List<ScreenShots> uniqueFileNames = new List<ScreenShots>();
-            if (updatedBug.ScreenShots != null && updatedBug.ScreenShots.Count > 0)
+
+            if (GlobalVar.InitialScreenShots == true)
             {
-                foreach (var file in updatedBug.ScreenShots)
-                {
-                    var uniqueFileName = "";
-                    string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "screenshots");
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
-                    uniqueFileNames.Add(new ScreenShots { FilePath = uniqueFileName, AssociatedBug = updatedBug.Bug.BugId });
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    using (var stream = System.IO.File.Create(filePath))
-                    {
-                        file.CopyTo(stream);
-                    }
-                }
+                uniqueFileNames = await UploadScreenShotsToStorage(updatedBug.Bug.BugId);
             }
+
+            GlobalVar.InitialScreenShots = false;
 
             var originalBug = _bugRepository.GetBug(updatedBug.Bug.BugId);
 
@@ -327,7 +310,6 @@ namespace BugTrackerProject.Controllers
             }
             else
             {
-
                 //bug = _bugRepository.GetBug(updatedBug.Bug.BugId);
                 bug = originalBug;
                 bug.ScreenShots = uniqueFileNames;
@@ -361,38 +343,12 @@ namespace BugTrackerProject.Controllers
                 ProjectName = projectName,
                 ProjectId = bug.AssociatedProject,
                 Updated = 1,
-                Src = new List<ScreenShots>(),
+                //Src = new List<ScreenShots>(),
+                Src = bug.ScreenShots,
                 bugHistories = bugHistory,
                 ProjectUsers = users
             };
-
-            //if (updatedBug.Bug.ScreenShots != null)
-            if (bug.ScreenShots != null)
-            {
-                foreach (var path in bug.ScreenShots)
-                {
-                    var imgPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", path.FilePath);
-
-                    using (FileStream stream = new FileStream(imgPath, FileMode.Open, FileAccess.Read))
-                    {
-                        var image = Image.FromStream(stream);
-
-                        using (var mStream = new MemoryStream())
-                        {
-                            image.Save(mStream, ImageFormat.Jpeg);
-                            var byteData = mStream.ToArray();
-                            string imreBase64Data = Convert.ToBase64String(byteData);
-                            string imgDataURL = $"data:image/{path.FilePath.Split(".")[1]};base64,{imreBase64Data}";
-                            viewModel.Src.Add(new ScreenShots
-                            {
-                                id = path.id,
-                                AssociatedBug = path.AssociatedBug,
-                                FilePath = imgDataURL
-                            });
-                        }
-                    }
-                }
-            }
+           
             return View(viewModel);
         }
 
@@ -403,5 +359,142 @@ namespace BugTrackerProject.Controllers
             var bug = _bugRepository.Delete(bugId);
             return RedirectToAction("ProjectBugs", "Project", new { projectId = bug.AssociatedProject });
         }
+
+
+        [HttpPost]
+        [Authorize(Policy = "ManagerPolicy")]
+        public IActionResult DeleteScreenshot(int screenShotId)
+        {
+            try
+            {
+                _bugRepository.DeleteScreenShots(screenShotId);
+                return Json(new { status = "success", message = "screenshot deleted" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", message = ex.Message });
+
+            }
+        }
+
+        //HttpPostedFileBase
+
+        [HttpPost]
+        [Authorize(Policy = "UserPolicy")]
+        public IActionResult StoreInitialScreenShots(List<IFormFile> Attachments)
+        {
+
+            var extensions = new List<string>() { ".tiff", ".pjp", ".pjpeg", ".jfif", ".tif",
+            ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib"};
+
+            var maxFileSize = 3 * 1024 * 1024;
+
+            string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "temporaryFileStorage");
+
+
+            try
+            {
+
+                foreach (var file in Attachments)
+                {
+                    var extension = Path.GetExtension(file.FileName);
+
+                    if (extensions.Contains(extension.ToLower()) == false)
+                    {
+                        var filePaths = Directory.GetFiles(uploadsFolder).ToList();
+
+                        if(filePaths.Count > 0)
+                        {
+                            foreach (var path in filePaths)
+                            {
+                                System.IO.File.Delete(path);
+                            }
+                        }
+
+                        return Json(new { status = "fileNotImage", message = "Please upload an image file" });
+
+
+                    }
+                    else if (file.Length > maxFileSize)
+                    {
+
+                        var filePaths = Directory.GetFiles(uploadsFolder).ToList();
+
+                        if (filePaths.Count > 0)
+                        {
+                            foreach (var path in filePaths)
+                            {
+                                System.IO.File.Delete(path);
+                            }
+                        }
+
+                        return Json(new { status = "fileTooLarge", message = "Please upload a smaller file" });
+                    }
+                    else {
+                        var uniqueFileName = "";
+                        uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            file.CopyTo(stream);
+                        }
+                    } 
+
+                }
+
+                GlobalVar.InitialScreenShots = true;
+
+                return Json(new { status = "success", message = "files temporarily stored" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { status = "error", message = ex.Message });
+            }
+        }
+
+
+        public async Task<List<ScreenShots>> UploadScreenShotsToStorage(int bugId)
+        {
+            List<ScreenShots> uniqueFileNames = new List<ScreenShots>();
+            if (GlobalVar.InitialScreenShots == true)
+            {
+                string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "temporaryFileStorage");
+
+                var filePaths = Directory.GetFiles(uploadsFolder).ToList();
+
+                foreach (var file in filePaths)
+                {
+
+                    using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                    {
+
+                        var fileNameSplit = stream.Name.Split("\\");
+                        var fileNameSplitLength = fileNameSplit.Length;
+
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileNameSplit[fileNameSplitLength - 1];
+
+                        using (var ms = new MemoryStream())
+                        {
+                            stream.CopyTo(ms);
+                            var fileBytes = ms.ToArray();
+                            var downloadUrl = await firebaseFileStorage.Upload(fileBytes, uniqueFileName);
+                            uniqueFileNames.Add(new ScreenShots
+                            {
+                                Url = downloadUrl,
+                                AssociatedBug = bugId,
+                                FileName = uniqueFileName
+                            });
+
+                        }
+
+                    }
+                    System.IO.File.Delete(file);
+                }
+
+            }
+
+            return uniqueFileNames;
+        }
+
     }
 }

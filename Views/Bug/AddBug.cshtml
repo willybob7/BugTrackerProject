@@ -100,20 +100,28 @@
             </div>
         </div>
 
+        <input hidden id="StoreInitialScreenShots" data-url="@Url.Action("StoreInitialScreenShots", "Bug")" />
+        <input hidden id="associatedProject" asp-for="@Model.NewBugAttributes.AssociatedProject" />
+
         <div class="form-group row ">
-            <label asp-for="@Model.ScreenShots" class="col-sm-3 col-form-label"></label>
+            <label for="screenShotInput" class="col-sm-3 col-form-label"></label>
             <div class="col-sm-9">
                 <div class="custom-file">
-                    <input multiple asp-for="@Model.ScreenShots" class="form-control custom-file-input bg-dark text-info" />
-                    <label class="custom-file-label bg-dark text-info">Choose Screenshot...</label>
+                    <input type="file" accept="image/*" id="screenShotInput" multiple class="form-control custom-file-input bg-dark text-info" />
+                    <label class="fileUploadLabel custom-file-label bg-dark text-info">Choose Screenshots...</label>
+                    <div class="inputMessage"></div>
+                    <div class="preview">
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="btn btn-primary clearPictures col-12 col-sm-4">clear pictures</div>
+                    </div>                
                 </div>
             </div>
         </div>
 
-        <input hidden id="associatedProject" asp-for="@Model.NewBugAttributes.AssociatedProject" />
         <div class="form-group row">
             <div class="col-sm-9">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <div id="addBugFormSubmit" class="btn btn-primary">Submit</div>
             </div>
         </div>
     </form>
@@ -121,6 +129,6 @@
 
 
 @section Scripts{
-
+    <script src="~/lib/LoadImage/load-image.all.min.js"></script>
     <script src="~/js/AddBug.js"></script>
 }

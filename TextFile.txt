@@ -1,26 +1,32 @@
 ﻿Need to do:
-implement signalR for the comment system- done! (really cool!!)
-	maybe do a hub just for time on the comment 
 	
-implement signalR for bugs
-implement signalR for projects
+	for the addBug view do a loop through the files and make multiple canvas elements
+	then do the ajax call with a progress bar to show the files being uploaded and then 
+
+
+	remove screenshots from the model that it is in and then make
+	it its own object and have them loaded independently so that they can
+	be made an ajax call 
+
 
 
 Nice to have:
 
-you could store the side panel status in the local storage.
-Make it so that the user can remove the comments and screenshots that they add
-validation for picture uploads and date entering
-search and sort functionality for bugs
-Preview/crop pictures before uploading
-upload picture to storage/resize them (possibly firebase like I did before)
-	and then somehow get a date sent to the view to show when the picture was added
-	use an image processing library to make a thumbnail and then use that as the link to the slideshow
-	this will probably all be possible with adding an image storage somewhere
-Make a feed page that shows the events that have happened in the project and allows you to 
-	add comments about each happening
-Make it so that a comment can only be edited by the creator, but able to be deleted by the admin/manager
-
-
+	you could store the side panel status in the local storage.
+	Make it so that the user can remove the comments and screenshots that they add
+	validation for picture uploads and date entering
+	search and sort functionality for bugs
+	add who uploaded a screenshot and when to the displaying screenshots
+	Preview/croph pictures before uploading
+	upload picture to storage/resize them (possibly firebase like I did before)
+		and then somehow get a date sent to the view to show when the picture was added
+		use an image processing library to make a thumbnail and then use that as the link to the slideshow
+		this will probably all be possible with adding an image storage somewhere
+	Make a feed page that shows the events that have happened in the project and allows you to 
+		add comments about each happening
+	Make it so that a comment can only be edited by the creator, but able to be deleted by the admin/manager
+	maybe do a hub just for time on the comment 
+	implement signalR for bugs
+	implement signalR for projects
 
 

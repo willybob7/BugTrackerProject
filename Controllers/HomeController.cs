@@ -49,24 +49,6 @@ namespace BugTrackerProject.Controllers
             return View(viewModel);
         }
 
-       
-
-        [HttpPost]
-        public IActionResult DeleteScreenshot(int screenShotId)
-        {
-            try
-            {
-                _bugRepository.DeleteScreenShots(screenShotId);
-                return Json(new { status = "success", message = "screenshot deleted" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { status = "error", message = ex.Message });
-
-            }
-        }
-
-
         public IActionResult MyBugs()
         {
             var userId = userManager.GetUserId(HttpContext.User);

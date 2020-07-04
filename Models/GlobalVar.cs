@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BugTrackerProject.Models.SubModels;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,8 +10,11 @@ namespace BugTrackerProject.Models
     public class GlobalVar
     {
 
-        static int _globalValue;
-        static ProjectAttributes GlobalProject;
+        public static int _globalValue;
+        public static ProjectAttributes GlobalProject;
+        public static bool globalInitialScreenShots;
+
+
 
         public static int ProjectId
         {
@@ -32,6 +37,18 @@ namespace BugTrackerProject.Models
             set
             {
                 GlobalProject = value;
+            }
+        }
+
+        public static bool InitialScreenShots
+        {
+            get
+            {
+                return globalInitialScreenShots;
+            }
+            set
+            {
+                globalInitialScreenShots = value;
             }
         }
     }

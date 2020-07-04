@@ -18,7 +18,8 @@ using BugTrackerProject.Security;
 using NETCore.MailKit.Infrastructure.Internal;
 using NETCore.MailKit.Extensions;
 using SignalRChat.Hubs;
-
+using BugTrackerProject.Storage;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BugTrackerProject
 {
@@ -86,6 +87,7 @@ namespace BugTrackerProject
 
             services.AddScoped<IBugRepository, SqlBugRepository>();
             services.AddScoped<IProjectRepository, SqlProjectRepository>();
+            services.AddScoped<IFirebaseFileStorage, FirebaseFileStorage>();
 
             services.AddIdentity<IdentityUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 10;
@@ -112,8 +114,11 @@ namespace BugTrackerProject
             services.AddTransient<IAuthorizationHandler, DeveloperLevel>();
             services.AddTransient<IAuthorizationHandler, ManagerLevel>();
             services.AddTransient<IAuthorizationHandler, AdministratorLevel>();
+            services.Configure<FirebaseStorageSettings>(Configuration.GetSection("FirebaseStorage"));
+
 
             services.AddSignalR();
+
 
 
         }
@@ -145,8 +150,8 @@ namespace BugTrackerProject
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapHub<ChatHub>("/chatHub");
-
             });
+           
         }
     }
 }

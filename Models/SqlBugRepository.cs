@@ -1,4 +1,5 @@
 ﻿using BugTrackerProject.Models.SubModels;
+using BugTrackerProject.Storage;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,12 @@ namespace BugTrackerProject.Models
     public class SqlBugRepository : IBugRepository
     {
         private readonly AppDbContext context;
+        private readonly IFirebaseFileStorage firebaseFileStorage;
 
-        public SqlBugRepository(AppDbContext context)
+        public SqlBugRepository(AppDbContext context, IFirebaseFileStorage firebaseFileStorage)
         {
             this.context = context;
-
+            this.firebaseFileStorage = firebaseFileStorage;
         }
         public BugAttributes Add(BugAttributes bug)
         {
@@ -34,11 +36,14 @@ namespace BugTrackerProject.Models
                 var associatedScreenshots = context.ScreenShots.Where(s => bug.BugId == s.AssociatedBug);
                 foreach (var file in associatedScreenshots)
                 {
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", file.FilePath);
-                    if (File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
+
+                    firebaseFileStorage.Delete(file.FileName);
+
+                    //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", file.Url);
+                    //if (File.Exists(path))
+                    //{
+                    //    File.Delete(path);
+                    //}
 
                     context.ScreenShots.Remove(file);
                 }
@@ -105,11 +110,14 @@ namespace BugTrackerProject.Models
         {
             var screenShot = context.ScreenShots.Find(screenShotId);
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", screenShot.FilePath);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "screenshots", screenShot.Url);
             if (File.Exists(path))
             {
                 File.Delete(path);
             }
+
+            firebaseFileStorage.Delete(screenShot.FileName);
+
 
             context.Remove(screenShot);
             context.SaveChanges();
