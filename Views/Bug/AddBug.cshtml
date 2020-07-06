@@ -6,12 +6,16 @@
     Layout = "~/Views/Shared/_ProjectLayout.cshtml";
     var managerLevel = (await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded;
 
+    
+        ViewBag.Title = "Add New Bug";
+    
+
 }
 
 
 
 <div class="container mt-3">
-    <form id="addBugForm" action="@Url.Action("addbug", "bug")" enctype="multipart/form-data" method="post">
+    <form id="submitBugDetailsForm" action="@Url.Action("addbug", "bug")" enctype="multipart/form-data" method="post">
         <div class="form-group row">
             <label asp-for="@Model.NewBugAttributes.Title" class="col-sm-3 col-form-label"></label>
             <div class="col-sm-9">
@@ -114,21 +118,27 @@
                     </div>
                     <div class="row justify-content-center">
                         <div class="btn btn-primary clearPictures col-12 col-sm-4">clear pictures</div>
-                    </div>                
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-sm-9">
-                <div id="addBugFormSubmit" class="btn btn-primary">Submit</div>
+                <div id="addBugScreenShotsSubmit" class="btn btn-primary">Submit</div>
             </div>
         </div>
     </form>
 </div>
 
+<div class="spinnerDiv">
+    <span class="spinner three"></span>
+</div>
+
+<div class="blurryBackground"></div>
 
 @section Scripts{
     <script src="~/lib/LoadImage/load-image.all.min.js"></script>
     <script src="~/js/AddBug.js"></script>
+    <script src="~/js/uploadScreenShots.js"></script>
 }

@@ -1,7 +1,7 @@
 ﻿@model List<ProjectAttributes>
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@{
+    ViewBag.Title = "My Projects";
+}
 
 <div>
     <a class="btn btn-primary" href="@Url.Action("addproject", "project")">Add Project</a>
@@ -9,7 +9,7 @@
 
 
 
-<div class="table-responsive-xl">
+<div class="table-responsive-xl" id="style-7">
     <table class="table table-hover table-borderless table-striped">
         <thead>
             <tr>
@@ -24,64 +24,64 @@
         <tbody>
             @foreach (var project in Model)
             {
-            <tr>
-                <th><a href="@Url.Action("SetGlobalVar", "project", new { projectId = project.ProjectId })">@project.ProjectName</a></th>
-                <td>@project.OwnerUserName</td>
-                <td>
-                    @{
-                        var badgeSatus = "";
-                        var badgeText = "";
-                        switch (project.ProjectStatus)
-                        {
-                            case ProjectStatus.Completed:
-                                badgeSatus = "badge-primary";
-                                badgeText = "Completed";
-                                break;
-                            case ProjectStatus.OnHold:
-                                badgeSatus = "badge-secondary";
-                                badgeText = "On Hold";
-                                break;
-                            case ProjectStatus.Active:
-                                badgeSatus = "badge-success";
-                                badgeText = "Active";
-                                break;
-                            case ProjectStatus.Delayed:
-                                badgeSatus = "badge-danger";
-                                badgeText = "Delayed";
-                                break;
-                            case ProjectStatus.InTesting:
-                                badgeSatus = "badge-warning";
-                                badgeText = "In Testing";
-                                break;
-                            case ProjectStatus.OnTrack:
-                                badgeSatus = "badge-info";
-                                badgeText = "On Track";
-                                break;
-                            case ProjectStatus.InPlanning:
-                                badgeSatus = "badge-light";
-                                badgeText = "In Planning";
-                                break;
-                            case ProjectStatus.Cancelled:
-                                badgeSatus = "badge-dark";
-                                badgeText = "Cancelled";
-                                break;
+                <tr>
+                    <th><a href="@Url.Action("SetGlobalVar", "project", new { projectId = project.ProjectId })">@project.ProjectName</a></th>
+                    <td>@project.OwnerUserName</td>
+                    <td>
+                        @{
+                            var badgeSatus = "";
+                            var badgeText = "";
+                            switch (project.ProjectStatus)
+                            {
+                                case ProjectStatus.Completed:
+                                    badgeSatus = "badge-primary";
+                                    badgeText = "Completed";
+                                    break;
+                                case ProjectStatus.OnHold:
+                                    badgeSatus = "badge-secondary";
+                                    badgeText = "On Hold";
+                                    break;
+                                case ProjectStatus.Active:
+                                    badgeSatus = "badge-success";
+                                    badgeText = "Active";
+                                    break;
+                                case ProjectStatus.Delayed:
+                                    badgeSatus = "badge-danger";
+                                    badgeText = "Delayed";
+                                    break;
+                                case ProjectStatus.InTesting:
+                                    badgeSatus = "badge-warning";
+                                    badgeText = "In Testing";
+                                    break;
+                                case ProjectStatus.OnTrack:
+                                    badgeSatus = "badge-info";
+                                    badgeText = "On Track";
+                                    break;
+                                case ProjectStatus.InPlanning:
+                                    badgeSatus = "badge-light";
+                                    badgeText = "In Planning";
+                                    break;
+                                case ProjectStatus.Cancelled:
+                                    badgeSatus = "badge-dark";
+                                    badgeText = "Cancelled";
+                                    break;
+                            }
                         }
+                        <span class="badge @badgeSatus badge-pill" style="color: black">@badgeText</span>
+                    </td>
+                    @if (project.ProjectBugs != null)
+                    {
+                        <td class="text-center">@project.ProjectBugs.Count()</td>
+
                     }
-                    <span class="badge @badgeSatus badge-pill" style="color: black">@badgeText</span>
-                </td>
-                @if (project.ProjectBugs != null)
-                {
-                    <td class="text-center">@project.ProjectBugs.Count()</td>
+                    else
+                    {
+                        <td class="text-center">0</td>
 
-                }
-                else
-                {
-                    <td class="text-center">0</td>
-
-                }
-                <td>@project.StartDate.ToShortDateString()</td>
-                <td>@project.EndDate.ToShortDateString()</td>
-            </tr>
+                    }
+                    <td>@project.StartDate.ToShortDateString()</td>
+                    <td>@project.EndDate.ToShortDateString()</td>
+                </tr>
             }
         </tbody>
     </table>

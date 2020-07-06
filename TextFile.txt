@@ -1,14 +1,5 @@
 ﻿Need to do:
 	
-	for the addBug view do a loop through the files and make multiple canvas elements
-	then do the ajax call with a progress bar to show the files being uploaded and then 
-
-
-	remove screenshots from the model that it is in and then make
-	it its own object and have them loaded independently so that they can
-	be made an ajax call 
-
-
 
 Nice to have:
 

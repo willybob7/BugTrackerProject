@@ -4,24 +4,23 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="style-7-body">
 <head>
     <link rel="icon" href="~/256 x 228 - BMP (32 bits).png" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Bug Tracker</title>
-    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-darkly.css" />
     <link href="~/lib/fontawesome-free-5.11.2-web/fontawesome-free-5.11.2-web/css/all.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap-darkly.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
 
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-spider"></i>Bug Tracker</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls=".navbar-collapse"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -82,6 +81,8 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

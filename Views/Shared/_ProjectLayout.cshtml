@@ -4,24 +4,26 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="style-7-body">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Bug Tracker</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-darkly.css" />
+    <link rel="icon" href="~/256 x 228 - BMP (32 bits).png" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap-darkly.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/lib/fontawesome-free-5.11.2-web/fontawesome-free-5.11.2-web/css/all.css" rel="stylesheet" />
     <link href="~/lib/Gallery-2.36.0/css/blueimp-gallery.min.css" rel="stylesheet" />
     <link href="~/lib/summernote-0.8.12-dist/dist/summernote-bs4.css" rel="stylesheet" />
 
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary border-bottom box-shadow">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-spider"></i> Bug Tracker</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls=".navbar-collapse"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -83,13 +85,13 @@
                 </a>
 
                 @if ((await AuthorizationService.AuthorizeAsync(User, "DeveloperPolicy")).Succeeded)
-                    {
-                        <a href="@Url.Action("ListUsers", "Administration", new { Model.ProjectId})" class="text-center list-group-item list-group-item-action bg-dark">
-                            <div class="d-flex justify-content-center"><i class="align-self-center fas fa-users"></i></div>
-                            List Users
-                        </a>
-                    }
-                </div>
+                {
+                    <a href="@Url.Action("ListUsers", "Administration", new { Model.ProjectId})" class="text-center list-group-item list-group-item-action bg-dark">
+                        <div class="d-flex justify-content-center"><i class="align-self-center fas fa-users"></i></div>
+                        List Users
+                    </a>
+                }
+            </div>
         </div>
         <button class="btn btn-primary" id="menu-toggle"></button>
 
@@ -106,14 +108,14 @@
             &copy; 2019 - BugTrackerProject - <a asp-area="" asp-controller="Home" asp-action="Privacy"><span class="text-light">Privacy</span></a>
         </div>
     </footer>
-    <script src="~/lib/chart.js/Chart.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/summernote-0.8.12-dist/dist/summernote-bs4.min.js"></script>
     <script src="~/lib/Gallery-2.36.0/js/blueimp-gallery.js"></script>
     <script src="~/lib/Gallery-2.36.0/js/blueimp-gallery-indicator.js"></script>
+    <script src="~/lib/chart.js/Chart.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 
 

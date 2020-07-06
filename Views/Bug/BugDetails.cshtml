@@ -10,283 +10,291 @@
     var developerLevel = (await AuthorizationService.AuthorizeAsync(User, "DeveloperPolicy")).Succeeded;
     var managerLevel = (await AuthorizationService.AuthorizeAsync(User, "ManagerPolicy")).Succeeded;
 
-
+    
+    ViewBag.Title = "Bug Details";
+    
 
 }
 
 
-    <div class="container">
-        <form id="submitBugDetailsForm" action="@Url.Action("bugdetails", "bug")" enctype="multipart/form-data" method="post">
-            <div class="form-group row mt-3">
-                @*@if ((await AuthorizationService.AuthorizeAsync(User, "DeveloperPolicy")).Succeeded)*@
-                @if (developerLevel)
-                {
-                    <input asp-for="@Model.Bug.Title" class=" form-control-lg bg-dark text-info col-12 col-md-8" id="bugName" value="@Model.Bug.Title" />
-                    <span asp-validation-for="@Model.Bug.Title" class="text-danger"></span>
-                }
-                else
-                {
-                    <input disabled asp-for="@Model.Bug.Title" class=" form-control-lg bg-dark text-info col-12 col-md-8" id="bugName" value="@Model.Bug.Title" />
-                }
-
-            </div>
-            <div class="row" style="color:#3498DB">
-                Reported by UserId: @Model.Bug.ReporterUserName on @Model.Bug.EnteredDate.ToShortDateString() &nbsp;&nbsp;&nbsp; Project: @Model.ProjectName
-            </div>
-            <div class="row">
-                <label asp-for="@Model.Bug.Description" class="col-sm-2 col-form-label" style="color:#3498DB"></label>
-            </div>
-            <div class="col-sm-12 row form-group">
-                @if (developerLevel)
-                {
-                    <textarea asp-for="@Model.Bug.Description" class="form-control bg-dark text-info" placeholder="Enter a description"></textarea>
-                    <span asp-validation-for="@Model.Bug.Description" class="text-danger"></span>
-                }
-                else
-                {
-                    <textarea disabled asp-for="@Model.Bug.Description" class="form-control bg-dark text-info" placeholder="Enter a description"></textarea>
-                }
-
-            </div>
-            <div class="row">
-                <div class="form-group col-sm-4">
-                    <label asp-for="@Model.Bug.AssigneeUserId" class="col-form-label" style="color:#3498DB"></label>
-                    @if (managerLevel)
-                    {
-                        <select asp-for="@Model.Bug.AssigneeUserId" class="form-control bg-dark text-info">
-                            <option value="">no one yet</option>
-                            @foreach (var user in Model.ProjectUsers)
-                            {
-                                <option value="@user.Id">@user.UserName</option>
-                            }
-
-                        </select>
-                    }
-                    else
-                    {
-                        <select disabled asp-for="@Model.Bug.AssigneeUserId" class="form-control bg-dark text-info">
-                            <option value="">no one yet</option>
-                            @foreach (var user in Model.ProjectUsers)
-                            {
-                                <option value="@user.Id">@user.UserName</option>
-                            }
-
-                        </select>
-                    }
-                    @if (Model.Bug.AssingeeUserName != null)
-                    {
-                        <input hidden asp-for="@Model.Bug.AssingeeUserName" />
-                    }
-
-                    @if (developerLevel)
-                    {
-                        <label asp-for="@Model.Bug.DueDate" class="col-form-label" style="color:#3498DB"></label>
-                        <input asp-for="@Model.Bug.DueDate" class="form-control bg-dark text-info" type="date" />
-                        <span asp-validation-for="@Model.Bug.DueDate" class="text-danger"></span>
-                        <label asp-for="@Model.Bug.Severity" class="col-form-label" style="color:#3498DB"></label>
-                        <select asp-for="@Model.Bug.Severity" class="form-control" style="color: black" id="bugSeverity">
-                            <option value="0" style="background: #b81c04">Critical</option>
-                            <option value="1" style="background: #d67404">Major</option>
-                            <option value="2" style="background: #ffee00">Minor</option>
-                        </select>
-                        <span asp-validation-for="@Model.Bug.Severity" class="text-danger"></span>
-                        <label asp-for="@Model.Bug.Reproducible" class="col-form-label" style="color:#3498DB"></label>
-                        <select asp-for="@Model.Bug.Reproducible" class="form-control bg-dark text-info" asp-items="Html.GetEnumSelectList<IsItReproducible>()">
-                            <option value="">Please select</option>
-                        </select>
-                        <span asp-validation-for="@Model.Bug.Reproducible" class="text-danger"></span>
-                        <label asp-for="@Model.Bug.Status" class="col-form-label" style="color:#3498DB"></label>
-                        <select asp-for="@Model.Bug.Status" class="form-control" style="color: black" id="bugStatus">
-                            <option value="0" style="background:#375a7f">Open</option>
-                            <option value="1" style="background:#3498DB">To Be Tested</option>
-                            <option value="2" style="background:#00bc8c">Closed</option>
-                        </select>
-                        <span asp-validation-for="@Model.Bug.Status" class="text-danger"></span>
-
-                    }
-                    else
-                    {
-                        <label asp-for="@Model.Bug.DueDate" class="col-form-label" style="color:#3498DB"></label>
-                        <input disabled asp-for="@Model.Bug.DueDate" class="form-control bg-dark text-info" type="date" />
-                        <span asp-validation-for="@Model.Bug.DueDate" class="text-danger"></span>
-                        <label asp-for="@Model.Bug.Severity" class="col-form-label" style="color:#3498DB"></label>
-                        <select disabled asp-for="@Model.Bug.Severity" class="form-control" style="color: black" id="bugSeverity">
-                            <option value="0" style="background: #b81c04">Critical</option>
-                            <option value="1" style="background: #d67404">Major</option>
-                            <option value="2" style="background: #ffee00">Minor</option>
-                        </select>
-                        <span asp-validation-for="@Model.Bug.Severity" class="text-danger"></span>
-                        <label asp-for="@Model.Bug.Reproducible" class="col-form-label" style="color:#3498DB"></label>
-                        <select disabled asp-for="@Model.Bug.Reproducible" class="form-control bg-dark text-info" asp-items="Html.GetEnumSelectList<IsItReproducible>()">
-                            <option value="">Please select</option>
-                        </select>
-                        <span asp-validation-for="@Model.Bug.Reproducible" class="text-danger"></span>
-                        <label asp-for="@Model.Bug.Status" class="col-form-label" style="color:#3498DB"></label>
-                        <select disabled asp-for="@Model.Bug.Status" class="form-control" style="color: black" id="bugStatus">
-                            <option value="0" style="background:#375a7f">Open</option>
-                            <option value="1" style="background:#3498DB">To Be Tested</option>
-                            <option value="2" style="background:#00bc8c">Closed</option>
-                        </select>
-                        <span asp-validation-for="@Model.Bug.Status" class="text-danger"></span>
-                    }
-
-
-                </div>
-                <div class="form-group col-sm-8 bugHistory" id="style-7">
-                    <h4>Bug History</h4>
-                    <table class="table table-hover table-borderless table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">Property Changed</th>
-                                <th scope="col">Old Value</th>
-                                <th scope="col">New Value</th>
-                                <th scope="col">Date Changed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var bugHistory in bugHistoriesSortedByDueDate)
-                            {
-                                <tr>
-                                    <td>@bugHistory.Property</td>
-                                    @if (bugHistory.OldValue.Length >= 15)
-                                    {
-                                        <td><button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="@bugHistory.OldValue">Old Value</button></td>
-                                    }
-                                    else
-                                    {
-                                        <td>@bugHistory.OldValue</td>
-                                    }
-
-                                    @if (bugHistory.NewValue.Length >= 15)
-                                    {
-                                        <td><button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="@bugHistory.NewValue">New Value</button></td>
-                                    }
-                                    else
-                                    {
-                                        <td>@bugHistory.NewValue</td>
-
-                                    }
-                                    <td>@bugHistory.DateChanged</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                </div>
-                @if (developerLevel)
-                {
-                    <button type="submit" class="btn btn-primary d-block ml-auto">Submit Changes</button>
-                }
-
-                <div id="blueimp-gallery" class="blueimp-gallery">
-                    <div class="slides"></div>
-                    <h3 class="title"></h3>
-                    <a class="prev">‹</a>
-                    <a class="next">›</a>
-                    <a class="close">×</a>
-                    <a class="play-pause"></a>
-                    <ol class="indicator"></ol>
-                </div>
-
-
-                <div class="form-group col-12">
-                    <label class="col-form-label">Screenshots</label>
-                    <hr style="height:1px; border:none; color:rgb(52, 152, 219); background-color:rgb(52, 152, 219);">
-
-                    <div id="links">
-                        @if (Model.Src != null)
-                        {
-                            foreach (var src in Model.Src)
-                            {
-                                <img style="display:none" src="@src.Url" asp-append-version="true" />
-                            }
-                        }
-                    </div>
-                    <div id="deleteScreenshot" style="display: none">
-                        @if (Model.Src != null && developerLevel)
-                        {
-                            foreach (var src in Model.Src)
-                            {
-                                <span class="deleteScreenShot" data-deleteAction="@Url.Action("deletescreenshot", "Bug", new { screenShotId = src.id })"><i class="far fa-trash-alt"></i></span>
-                            }
-                        }
-                    </div>
-                </div>
-
-                @*I need to get this set up right*@
-                <input hidden asp-for="@Model.Bug.ReporterID" />
-                <input hidden asp-for="@Model.Bug.ReporterUserName" />
-                <input hidden id="currentUserName" asp-for="@Model.CurrentUserName" />
-                <input hidden id="bugId" asp-for="@Model.Bug.BugId" />
-                <input hidden id="associatedProjectId" asp-for="@Model.Bug.AssociatedProject" />
-                <input hidden asp-for="@Model.Bug.EnteredDate" />
-            </div>
-
-
-        </form>
-
-        <input hidden id="StoreInitialScreenShots" data-url="@Url.Action("StoreInitialScreenShots", "Bug")" />
-
-
-        <div class="form-group row container">
-            <label for="screenShotInput" class="col-sm-5 col-form-label"></label>
-            <div class="col-12">
-                <div class="custom-file">
-                    <input class="form-control custom-file-input bg-dark text-info"
-                           id="screenShotInput" type="file" accept="image/*" multiple/>
-                    <label class="fileUploadLabel custom-file-label bg-dark text-info">Choose Screenshot...</label>
-                    <div class="inputMessage"></div>
-                    <div class="preview">
-                    </div>
-                    <div class="screenShotButtonDiv">
-                        <button class="btn btn-primary clearPictures">clear pictures</button>
-                        <button id="addBugScreenShotsSubmit" class="btn btn-primary ml-auto d-inline">Add ScreenShots</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <label asp-for="@Model.Bug.Comments"></label>
-        <div id="comments">
-            @foreach (var comment in Model.Bug.Comments)
+<div class="container">
+    <form id="submitBugDetailsForm" action="@Url.Action("bugdetails", "bug")" enctype="multipart/form-data" method="post">
+        <div class="form-group row mt-3">
+            @*@if ((await AuthorizationService.AuthorizeAsync(User, "DeveloperPolicy")).Succeeded)*@
+            @if (developerLevel)
             {
-                <span style="display:none; visibility:hidden"
-                      data-associatedBug="@comment.AssociatedBugId"
-                      data-userId="@comment.UserId"
-                      data-createdDate="@comment.CreatedDate"
-                      data-commentId="@comment.Id"
-                      data-actionUrl="@Url.Action("deletecomment", "bugcomment", new { commentId = comment.Id })"
-                      class="downloadedComment">
-                    @comment.CommentText
-                </span>
+                <input asp-for="@Model.Bug.Title" class=" form-control-lg bg-dark text-info col-12 col-md-8" id="bugName" value="@Model.Bug.Title" />
+                <span asp-validation-for="@Model.Bug.Title" class="text-danger"></span>
             }
-        </div>
-        <hr style="height:1px; border:none; color:rgb(52, 152, 219); background-color:rgb(52, 152, 219);">
-        <form id="commentForm" action="@Url.Action("uploadcomment", "bugcomment")" class="container">
-            <p>Add a comment</p>
-            <textarea id="summernote" class="d-none" style="visibility:hidden" name="editordata" placeholder="Enter a comment"></textarea>
-            <button id="sendButton" type="submit" class="btn btn-primary d-block ml-auto">Add Comment</button>
-        </form>
-        @if (managerLevel)
-        {
-            <button type="button" id="deleteButton" class="btn btn-danger">Delete Bug</button>
+            else
+            {
+                <input disabled asp-for="@Model.Bug.Title" class=" form-control-lg bg-dark text-info col-12 col-md-8" id="bugName" value="@Model.Bug.Title" />
+            }
 
-            <div class="container">
-                <div id="deleteAlert" class="row alert alert-dismissible alert-warning " style="display: none; font-size:x-large">
-                    <button type="button" id="deleteAlertClose" class="close">&times;</button>
-                    <strong style="color: black">Are you sure you want to delete the bug?</strong>
-                    <p style="color: black">Type the name of the bug here</p>
-                    <input class="col" id="deletePhrase" type="text" />
-                    <a class="btn btn-danger mt-3" id="delete" style="display: none" href="@Url.Action("deletebug", "bug", new { bugId = Model.Bug.BugId})">Delete</a>
+        </div>
+        <div class="row" style="color:#3498DB">
+            Reported by UserId: @Model.Bug.ReporterUserName on @Model.Bug.EnteredDate.ToShortDateString() &nbsp;&nbsp;&nbsp; Project: @Model.ProjectName
+        </div>
+        <div class="row">
+            <label asp-for="@Model.Bug.Description" class="col-sm-2 col-form-label" style="color:#3498DB"></label>
+        </div>
+        <div class="col-sm-12 row form-group">
+            @if (developerLevel)
+            {
+                <textarea asp-for="@Model.Bug.Description" class="form-control bg-dark text-info" placeholder="Enter a description"></textarea>
+                <span asp-validation-for="@Model.Bug.Description" class="text-danger"></span>
+            }
+            else
+            {
+                <textarea disabled asp-for="@Model.Bug.Description" class="form-control bg-dark text-info" placeholder="Enter a description"></textarea>
+            }
+
+        </div>
+        <div class="row">
+            <div class="form-group col-sm-4">
+                <label asp-for="@Model.Bug.AssigneeUserId" class="col-form-label" style="color:#3498DB"></label>
+                @if (managerLevel)
+                {
+                    <select asp-for="@Model.Bug.AssigneeUserId" class="form-control bg-dark text-info">
+                        <option value="">no one yet</option>
+                        @foreach (var user in Model.ProjectUsers)
+                        {
+                            <option value="@user.Id">@user.UserName</option>
+                        }
+
+                    </select>
+                }
+                else
+                {
+                    <select disabled asp-for="@Model.Bug.AssigneeUserId" class="form-control bg-dark text-info">
+                        <option value="">no one yet</option>
+                        @foreach (var user in Model.ProjectUsers)
+                        {
+                            <option value="@user.Id">@user.UserName</option>
+                        }
+
+                    </select>
+                }
+                @if (Model.Bug.AssingeeUserName != null)
+                {
+                    <input hidden asp-for="@Model.Bug.AssingeeUserName" />
+                }
+
+                @if (developerLevel)
+                {
+                    <label asp-for="@Model.Bug.DueDate" class="col-form-label" style="color:#3498DB"></label>
+                    <input asp-for="@Model.Bug.DueDate" class="form-control bg-dark text-info" type="date" />
+                    <span asp-validation-for="@Model.Bug.DueDate" class="text-danger"></span>
+                    <label asp-for="@Model.Bug.Severity" class="col-form-label" style="color:#3498DB"></label>
+                    <select asp-for="@Model.Bug.Severity" class="form-control" style="color: black" id="bugSeverity">
+                        <option value="0" style="background: #b81c04">Critical</option>
+                        <option value="1" style="background: #d67404">Major</option>
+                        <option value="2" style="background: #ffee00">Minor</option>
+                    </select>
+                    <span asp-validation-for="@Model.Bug.Severity" class="text-danger"></span>
+                    <label asp-for="@Model.Bug.Reproducible" class="col-form-label" style="color:#3498DB"></label>
+                    <select asp-for="@Model.Bug.Reproducible" class="form-control bg-dark text-info" asp-items="Html.GetEnumSelectList<IsItReproducible>()">
+                        <option value="">Please select</option>
+                    </select>
+                    <span asp-validation-for="@Model.Bug.Reproducible" class="text-danger"></span>
+                    <label asp-for="@Model.Bug.Status" class="col-form-label" style="color:#3498DB"></label>
+                    <select asp-for="@Model.Bug.Status" class="form-control" style="color: black" id="bugStatus">
+                        <option value="0" style="background:#375a7f">Open</option>
+                        <option value="1" style="background:#3498DB">To Be Tested</option>
+                        <option value="2" style="background:#00bc8c">Closed</option>
+                    </select>
+                    <span asp-validation-for="@Model.Bug.Status" class="text-danger"></span>
+
+                }
+                else
+                {
+                    <label asp-for="@Model.Bug.DueDate" class="col-form-label" style="color:#3498DB"></label>
+                    <input disabled asp-for="@Model.Bug.DueDate" class="form-control bg-dark text-info" type="date" />
+                    <span asp-validation-for="@Model.Bug.DueDate" class="text-danger"></span>
+                    <label asp-for="@Model.Bug.Severity" class="col-form-label" style="color:#3498DB"></label>
+                    <select disabled asp-for="@Model.Bug.Severity" class="form-control" style="color: black" id="bugSeverity">
+                        <option value="0" style="background: #b81c04">Critical</option>
+                        <option value="1" style="background: #d67404">Major</option>
+                        <option value="2" style="background: #ffee00">Minor</option>
+                    </select>
+                    <span asp-validation-for="@Model.Bug.Severity" class="text-danger"></span>
+                    <label asp-for="@Model.Bug.Reproducible" class="col-form-label" style="color:#3498DB"></label>
+                    <select disabled asp-for="@Model.Bug.Reproducible" class="form-control bg-dark text-info" asp-items="Html.GetEnumSelectList<IsItReproducible>()">
+                        <option value="">Please select</option>
+                    </select>
+                    <span asp-validation-for="@Model.Bug.Reproducible" class="text-danger"></span>
+                    <label asp-for="@Model.Bug.Status" class="col-form-label" style="color:#3498DB"></label>
+                    <select disabled asp-for="@Model.Bug.Status" class="form-control" style="color: black" id="bugStatus">
+                        <option value="0" style="background:#375a7f">Open</option>
+                        <option value="1" style="background:#3498DB">To Be Tested</option>
+                        <option value="2" style="background:#00bc8c">Closed</option>
+                    </select>
+                    <span asp-validation-for="@Model.Bug.Status" class="text-danger"></span>
+                }
+
+
+            </div>
+            <div class="form-group col-sm-8 bugHistory" id="style-7">
+                <h4>Bug History</h4>
+                <table class="table table-hover table-borderless table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Property Changed</th>
+                            <th scope="col">Old Value</th>
+                            <th scope="col">New Value</th>
+                            <th scope="col">Date Changed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var bugHistory in bugHistoriesSortedByDueDate)
+                        {
+                            <tr>
+                                <td>@bugHistory.Property</td>
+                                @if (bugHistory.OldValue.Length >= 15)
+                                {
+                                    <td><button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="@bugHistory.OldValue">Old Value</button></td>
+                                }
+                                else
+                                {
+                                    <td>@bugHistory.OldValue</td>
+                                }
+
+                                @if (bugHistory.NewValue.Length >= 15)
+                                {
+                                    <td><button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="@bugHistory.NewValue">New Value</button></td>
+                                }
+                                else
+                                {
+                                    <td>@bugHistory.NewValue</td>
+
+                                }
+                                <td>@bugHistory.DateChanged</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            @if (developerLevel)
+            {
+                <button type="submit" class="btn btn-primary d-block ml-auto">Submit Changes</button>
+            }
+
+            <div id="blueimp-gallery" class="blueimp-gallery">
+                <div class="slides"></div>
+                <h3 class="title"></h3>
+                <a class="prev">‹</a>
+                <a class="next">›</a>
+                <a class="close">×</a>
+                <a class="play-pause"></a>
+                <ol class="indicator"></ol>
+            </div>
+
+
+            <div class="form-group col-12">
+                <label class="col-form-label">Screenshots</label>
+                <hr style="height:1px; border:none; color:rgb(52, 152, 219); background-color:rgb(52, 152, 219);">
+
+                <div id="links">
+                    @if (Model.Src != null)
+                    {
+                        foreach (var src in Model.Src)
+                        {
+                            <img style="display:none" src="@src.Url" asp-append-version="true" />
+                        }
+                    }
+                </div>
+                <div id="deleteScreenshot" style="display: none">
+                    @if (Model.Src != null && developerLevel)
+                    {
+                        foreach (var src in Model.Src)
+                        {
+                            <span class="deleteScreenShot" data-deleteAction="@Url.Action("deletescreenshot", "Bug", new { screenShotId = src.id })"><i class="far fa-trash-alt"></i></span>
+                        }
+                    }
                 </div>
             </div>
-        }
+
+            @*I need to get this set up right*@
+            <input hidden asp-for="@Model.Bug.ReporterID" />
+            <input hidden asp-for="@Model.Bug.ReporterUserName" />
+            <input hidden id="currentUserName" asp-for="@Model.CurrentUserName" />
+            <input hidden id="bugId" asp-for="@Model.Bug.BugId" />
+            <input hidden id="associatedProjectId" asp-for="@Model.Bug.AssociatedProject" />
+            <input hidden asp-for="@Model.Bug.EnteredDate" />
+        </div>
 
 
+    </form>
 
+    <input hidden id="StoreInitialScreenShots" data-url="@Url.Action("StoreInitialScreenShots", "Bug")" />
+
+
+    <div class="form-group row container">
+        <label for="screenShotInput" class="col-sm-5 col-form-label"></label>
+        <div class="col-12">
+            <div class="custom-file">
+                <input class="form-control custom-file-input bg-dark text-info"
+                       id="screenShotInput" type="file" accept="image/*" multiple />
+                <label class="fileUploadLabel custom-file-label bg-dark text-info">Choose Screenshot...</label>
+                <div class="inputMessage"></div>
+                <div class="preview">
+                </div>
+                <div class="screenShotButtonDiv">
+                    <button class="btn btn-primary clearPictures">clear pictures</button>
+                    <button id="addBugScreenShotsSubmit" class="btn btn-primary ml-auto d-inline">Add ScreenShots</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
+    <label asp-for="@Model.Bug.Comments"></label>
+    <div id="comments">
+        @foreach (var comment in Model.Bug.Comments)
+        {
+            <span style="display:none; visibility:hidden"
+                  data-associatedBug="@comment.AssociatedBugId"
+                  data-userId="@comment.UserId"
+                  data-createdDate="@comment.CreatedDate"
+                  data-commentId="@comment.Id"
+                  data-actionUrl="@Url.Action("deletecomment", "bugcomment", new { commentId = comment.Id })"
+                  class="downloadedComment">
+                @comment.CommentText
+            </span>
+        }
+    </div>
+    <hr style="height:1px; border:none; color:rgb(52, 152, 219); background-color:rgb(52, 152, 219);">
+    <form id="commentForm" action="@Url.Action("uploadcomment", "bugcomment")" class="container">
+        <p>Add a comment</p>
+        <textarea id="summernote" class="d-none" style="visibility:hidden" name="editordata" placeholder="Enter a comment"></textarea>
+        <button id="sendButton" type="submit" class="btn btn-primary d-block ml-auto">Add Comment</button>
+    </form>
+    @if (managerLevel)
+    {
+        <button type="button" id="deleteButton" class="btn btn-danger">Delete Bug</button>
+
+        <div class="container">
+            <div id="deleteAlert" class="row alert alert-dismissible alert-warning " style="display: none; font-size:x-large">
+                <button type="button" id="deleteAlertClose" class="close">&times;</button>
+                <strong style="color: black">Are you sure you want to delete the bug?</strong>
+                <p style="color: black">Type the name of the bug here</p>
+                <input class="col" id="deletePhrase" type="text" />
+                <a class="btn btn-danger mt-3" id="delete" style="display: none" href="@Url.Action("deletebug", "bug", new { bugId = Model.Bug.BugId})">Delete</a>
+            </div>
+        </div>
+    }
+
+
+
+</div>
+
+<div class="spinnerDiv">
+    <span class="spinner three"></span>
+</div>
+
+<div class="blurryBackground"></div>
 
 @section Scripts{
     <script>
@@ -312,5 +320,6 @@
     <script src="~/lib/signalr/signalr.min.js"></script>
     <script src="~/lib/LoadImage/load-image.all.min.js"></script>
     <script src="~/js/BugDetails.js"></script>
+    <script src="~/js/uploadScreenShots.js"></script>
 }
 
