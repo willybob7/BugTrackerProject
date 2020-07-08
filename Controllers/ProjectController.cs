@@ -62,12 +62,12 @@ namespace BugTrackerProject.Controllers
                 //project.UsersAssigned = "";
                 project.OwnerUserName = user.UserName;
                 newProject = _projectRepository.Add(project);
-                var viewModel = new ProjectDetailsAndAssociatedBugs()
-                {
-                    Project = newProject,
-                    ProjectBugs = _bugRepository.GetAllProjectBugs(project.ProjectId),
-                    ProjectId = newProject.ProjectId
-                };
+                //var viewModel = new ProjectDetailsAndAssociatedBugs()
+                //{
+                //    Project = newProject,
+                //    ProjectBugs = _bugRepository.GetAllProjectBugs(project.ProjectId),
+                //    ProjectId = newProject.ProjectId
+                //};
 
                 var claims = await userManager.GetClaimsAsync(user);
                 var result = await userManager.RemoveClaimsAsync(user, claims);
@@ -75,7 +75,7 @@ namespace BugTrackerProject.Controllers
 
                 var claimList = new List<Claim>();
 
-                var currentClaims = claims.ToList();
+                //var currentClaims = claims.ToList();
                 for (var i = 0; i < ClaimsStore.AllClaims.Count; i++)
                 {
                     if (claims.Count == 4 && claims[i].Value != null)
@@ -90,6 +90,7 @@ namespace BugTrackerProject.Controllers
 
                 }
 
+                GlobalVar.globalCurrentUserClaims = claimList;
 
                 result = await userManager.AddClaimsAsync(user, claimList);
 
@@ -101,8 +102,9 @@ namespace BugTrackerProject.Controllers
                 //    return View(model);
                 //}
 
+                GlobalVar.ProjectId = newProject.ProjectId;
 
-                return View("ProjectDetails", viewModel);
+                return RedirectToAction("ProjectDetails", newProject.ProjectId);
             }
             return View();
         }
@@ -122,16 +124,30 @@ namespace BugTrackerProject.Controllers
         //[Authorize(Policy = "UserPolicy")]
         public async Task<IActionResult> ProjectDetails(int projectId)
         {
-            GlobalVar.ProjectId = projectId;
+            var project = new ProjectAttributes(); 
 
+            if(projectId > 0)
+            {
+                project = _projectRepository.GetProject(projectId);
+                GlobalVar.ProjectId = projectId;
+            } else
+            {
+                project = _projectRepository.GetProject(GlobalVar.ProjectId);
 
-            var project = _projectRepository.GetProject(GlobalVar.ProjectId);
+            }
 
             GlobalVar.Project = project;
 
-            var UserIsUserLevel = UserClaimsLevel.IsUser(HttpContext.User.Claims.ToList(), projectId);
+            var userId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(userId);
+            var claims = await userManager.GetClaimsAsync(user);
 
-            if(UserIsUserLevel == false)
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            //var UserIsUserLevel = UserClaimsLevel.IsUser(HttpContext.User.Claims.ToList(), projectId);
+            var UserIsUserLevel = UserClaimsLevel.IsUser(claims.ToList(), project.ProjectId);
+
+            if (UserIsUserLevel == false)
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
@@ -150,15 +166,22 @@ namespace BugTrackerProject.Controllers
                 ProjectId = project.ProjectId
             };
             return View(viewModel);
-        }
+            }
 
         [HttpPost]
         [Authorize(Policy  = "ManagerPolicy")]
-        public IActionResult ProjectDetails(ProjectDetailsAndAssociatedBugs projectUpdates)
+        public async Task<IActionResult> ProjectDetails(ProjectDetailsAndAssociatedBugs projectUpdates)
         {
 
 
             var originalProject = _projectRepository.GetProject(projectUpdates.Project.ProjectId);
+            
+            
+            var userId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(userId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
 
 
 
@@ -208,7 +231,7 @@ namespace BugTrackerProject.Controllers
         }
 
         //[Authorize(Policy = "UserPolicy")]
-        public IActionResult ProjectBugs(int projectId)
+        public async Task<IActionResult> ProjectBugs(int projectId)
         {
 
             GlobalVar.ProjectId = projectId;
@@ -217,7 +240,13 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsUserLevel = UserClaimsLevel.IsUser(HttpContext.User.Claims.ToList(), projectId);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(user);
+            
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var UserIsUserLevel = UserClaimsLevel.IsUser(claims.ToList(), projectId);
 
             if (UserIsUserLevel == false)
             {
@@ -238,10 +267,18 @@ namespace BugTrackerProject.Controllers
 
         [Authorize(Policy = "AdminPolicy")]
 
-        public IActionResult DeleteProject(int projectId)
+        public async Task<IActionResult> DeleteProject(int projectId)
         {
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+
             var project = _projectRepository.Delete(projectId);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
 

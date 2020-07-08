@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BugTrackerProject.Security
@@ -28,24 +29,57 @@ namespace BugTrackerProject.Security
             var things = context.User.Identity;
 
 
-
-            var UserClaims = context.User.FindFirst(c => c.Type == "Admin Role");
-
-            var claimProjects = UserClaims.Value.Split(" ").ToList();
-
-            foreach (var projectId in claimProjects)
+            if (GlobalVar.globalCurrentUserClaims != null)
             {
-                if (projectId.Length > 0)
+
+                var UserClaims = GlobalVar.globalCurrentUserClaims.Find(c => c.Type == "Admin Role");
+
+                var claimProjects = UserClaims.Value.Split(" ").ToList();
+
+
+                foreach (var projectId in claimProjects)
                 {
-                    AdministratorProjects.Add(Convert.ToInt32(projectId));
+                    if (projectId.Length > 0)
+                    {
+                        AdministratorProjects.Add(Convert.ToInt32(projectId));
+                    }
                 }
-            }
 
 
-            if (AdministratorProjects.Contains(GlobalVar.ProjectId))
+                if (AdministratorProjects.Contains(GlobalVar.ProjectId))
+                {
+                    context.Succeed(requirement);
+                }
+
+
+            }else
             {
-                context.Succeed(requirement);
+                var UserClaims = context.User.FindFirst(c => c.Type == "Admin Role");
+
+
+                var claimProjects = UserClaims.Value.Split(" ").ToList();
+
+
+                foreach (var projectId in claimProjects)
+                {
+                    if (projectId.Length > 0)
+                    {
+                        AdministratorProjects.Add(Convert.ToInt32(projectId));
+                    }
+                }
+
+
+                if (AdministratorProjects.Contains(GlobalVar.ProjectId))
+                {
+                    context.Succeed(requirement);
+                }
+
             }
+
+
+
+
+
 
 
 

@@ -14,6 +14,7 @@ using BugTrackerProject.Models.SubModels;
 using System.Drawing.Imaging;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTrackerProject.Controllers
 {
@@ -22,12 +23,15 @@ namespace BugTrackerProject.Controllers
 
         private readonly ILogger<BugCommentController> _logger;
         private readonly IBugRepository _bugRepository;
+        private readonly UserManager<IdentityUser> userManager;
 
         public BugCommentController(ILogger<BugCommentController> logger,
-            IBugRepository bugRepository)
+            IBugRepository bugRepository,
+            UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _bugRepository = bugRepository;
+            this.userManager = userManager;
         }
 
 
@@ -35,8 +39,16 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "UserPolicy")]
-        public IActionResult UploadComment(string comment, string userId, int associatedProject, int associatedBug)
+        public async Task<IActionResult> UploadComment(string comment, string userId, int associatedProject, int associatedBug)
         {
+
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
             try
             {
                 Comment uploadedComment = new Comment
@@ -67,8 +79,14 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "ManagerPolicy")]
-        public IActionResult DeleteComment(int commentId)
+        public async Task<IActionResult> DeleteComment(int commentId)
         {
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
             try
             {
                 _bugRepository.DeleteComment(commentId);
@@ -83,8 +101,15 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "ManagerPolicy")]
-        public IActionResult UpdateComment(string comment, string userId, int associatedProject, int associatedBug, int commentId)
+        public async Task<IActionResult> UpdateComment(string comment, string userId, int associatedProject, int associatedBug, int commentId)
         {
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
             try
             {
                 var uploadedComment = new Comment

@@ -1,4 +1,5 @@
-﻿using BugTrackerProject.ViewModels;
+﻿using BugTrackerProject.Models;
+using BugTrackerProject.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -73,6 +74,11 @@ namespace BugTrackerProject.Controllers
 
                 if (result.Succeeded)
                 {
+
+                    var claims = await userManager.GetClaimsAsync(user);
+
+                    GlobalVar.UserClaims = claims.ToList();
+
                     if (string.IsNullOrEmpty(returnUrl) == false && Url.IsLocalUrl(returnUrl))
                     {
                         //return LocalRedirect(returnUrl);//use this if you don't want to use Url.IsLocalUrl
@@ -102,6 +108,7 @@ namespace BugTrackerProject.Controllers
         {
             await signInManager.SignOutAsync();
             return RedirectToAction("index", "home");
+
         }
 
 
@@ -217,6 +224,13 @@ namespace BugTrackerProject.Controllers
             var User = await userManager.FindByIdAsync(id);
 
             await signInManager.SignInAsync(User, false, null);
+
+            //var currentUserId = userManager.GetUserId(HttpContext.User);
+            //var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(User);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
 
             return RedirectToAction("Index", "Home");
         }

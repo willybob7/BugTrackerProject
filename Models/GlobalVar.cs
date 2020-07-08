@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BugTrackerProject.Models
@@ -13,6 +14,8 @@ namespace BugTrackerProject.Models
         public static int _globalValue;
         public static ProjectAttributes GlobalProject;
         public static bool globalInitialScreenShots;
+        public static List<Claim> globalCurrentUserClaims;
+
 
 
 
@@ -49,6 +52,18 @@ namespace BugTrackerProject.Models
             set
             {
                 globalInitialScreenShots = value;
+            }
+        }
+
+        public static List<Claim> UserClaims
+        {
+            get
+            {
+                return globalCurrentUserClaims;
+            }
+            set
+            {
+                globalCurrentUserClaims = value;
             }
         }
     }

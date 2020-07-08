@@ -3,12 +3,16 @@
 
 Nice to have:
 
+	add error handling and logging
+	set up the database more correctly doing lazy loading and 
+		don't set up a bunch of serverside code when you could do
+		all that with the database
 	you could store the side panel status in the local storage.
 	Make it so that the user can remove the comments and screenshots that they add
-	validation for picture uploads and date entering
+	validation for date entering
 	search and sort functionality for bugs
-	add who uploaded a screenshot and when to the displaying screenshots
-	Preview/croph pictures before uploading
+	add who uploaded a screenshot and when to the screenshots section
+	crop pictures before uploading
 	upload picture to storage/resize them (possibly firebase like I did before)
 		and then somehow get a date sent to the view to show when the picture was added
 		use an image processing library to make a thumbnail and then use that as the link to the slideshow

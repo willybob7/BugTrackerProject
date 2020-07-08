@@ -36,9 +36,15 @@ namespace BugTrackerProject.Controllers
             this.userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var userId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(userId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
+
             var viewModel = new HomeViewModel()
             {
                 MyBugs = _bugRepository.GetAllAssigneeBugs(userId),
@@ -49,9 +55,15 @@ namespace BugTrackerProject.Controllers
             return View(viewModel);
         }
 
-        public IActionResult MyBugs()
+        public async Task<IActionResult> MyBugs()
         {
+
+
             var userId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(userId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
 
             var myBugs = _bugRepository.GetAllAssigneeBugs(userId);
             var associatedProjects = new List<ProjectAttributes>();
@@ -68,10 +80,15 @@ namespace BugTrackerProject.Controllers
         }
 
         
-        public IActionResult MyProjects()
+        public async Task<IActionResult> MyProjects()
         {
             var userId = userManager.GetUserId(HttpContext.User);
             var userName = userManager.GetUserName(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(userId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
             var projectList = _projectRepository.GetAllOwnedOrAssignedProjects(userId).Result;
             foreach(var project in projectList)
             {

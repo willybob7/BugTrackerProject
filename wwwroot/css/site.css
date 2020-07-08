@@ -452,10 +452,10 @@ body {
 }
 
 .blurryBackground {
-    height: 100vh;
+    height: 200vh;
     position: fixed;
     background: rgba(33, 58, 219, 0.5);
-    width: 100vw;
+    width: 200vw;
     z-index: 978;
     left: 0;
     top: 0;

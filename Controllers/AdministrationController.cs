@@ -43,7 +43,13 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(HttpContext.User.Claims.ToList(), projectId);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(claims.ToList(), projectId);
 
             if (UserIsDeveloperLevel == false)
             {
@@ -82,6 +88,15 @@ namespace BugTrackerProject.Controllers
 
         public async Task<IActionResult> RemoveUserFromProject(string userId, int projectId)
         {
+
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+
             var project = projectRepository.GetProject(projectId);
 
             var usersAssignedToProject = project.UsersAssigned.Split(" ").ToList();
@@ -164,7 +179,7 @@ namespace BugTrackerProject.Controllers
 
         [HttpGet]
         //[Authorize(Policy = "DeveloperPolicy")]
-        public IActionResult AddUserToProject(int projectId)
+        public async Task<IActionResult> AddUserToProject(int projectId)
         {
 
             GlobalVar.ProjectId = projectId;
@@ -174,7 +189,13 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(HttpContext.User.Claims.ToList(), projectId);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(claims.ToList(), projectId);
 
             if (UserIsDeveloperLevel == false)
             {
@@ -197,6 +218,12 @@ namespace BugTrackerProject.Controllers
             var userList = users.Split(" ").ToList();
 
             var project = projectRepository.GetProject(projectId);
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
 
             foreach (var userId in userList)
             {
@@ -272,8 +299,15 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "DeveloperPolicy")]
-        public IActionResult FindUsers(string input, int projectId)
+        public async Task<IActionResult> FindUsers(string input, int projectId)
         {
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
             try
             {
                 //this is for the search function to add users to projects
@@ -326,7 +360,13 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsMangerLevel = UserClaimsLevel.IsManager(HttpContext.User.Claims.ToList(), projectId);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var UserIsMangerLevel = UserClaimsLevel.IsManager(claims.ToList(), projectId);
 
             if (UserIsMangerLevel == false)
             {
@@ -393,9 +433,14 @@ namespace BugTrackerProject.Controllers
 
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
-            var user = await userManager.FindByIdAsync(model.Id);
 
-            
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var user = await userManager.FindByIdAsync(model.Id);
 
             if (user == null)
             {
@@ -438,7 +483,19 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsMangerLevel = UserClaimsLevel.IsManager(HttpContext.User.Claims.ToList(), projectId);
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
+
+            var user = await userManager.FindByIdAsync(userId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            //var UserIsMangerLevel = UserClaimsLevel.IsManager(HttpContext.User.Claims.ToList(), projectId);
+            var UserIsMangerLevel = UserClaimsLevel.IsManager(claims.ToList(), projectId);
 
             if (UserIsMangerLevel == false)
             {
@@ -448,8 +505,6 @@ namespace BugTrackerProject.Controllers
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
-
-            var user = await userManager.FindByIdAsync(userId);
 
             if (user == null)
             {
@@ -499,9 +554,15 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "ManagerPolicy")]
-
         public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel model)
-        {
+        { 
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var currentUserClaims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = currentUserClaims.ToList();
+
+
             var user = await userManager.FindByIdAsync(model.UserId);
 
             var project = projectRepository.GetProject(model.ProjectId);

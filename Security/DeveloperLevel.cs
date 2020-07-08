@@ -28,31 +28,61 @@ namespace BugTrackerProject.Security
 
             var DeveloperProjects = new List<int>();
 
-            var things = context.User.Identity;
+            //var things = context.User.Identity;
 
-
-            var DeveloperClaims = context.User.FindFirst(c => c.Type == "Developer Role");
-            var ManagerClaims = context.User.FindFirst(c => c.Type == "Manager Role");
-            var AdminClaims = context.User.FindFirst(c => c.Type == "Admin Role");
-
-            var claimProjects = DeveloperClaims.Value.Split(" ").ToList();
-            claimProjects.AddRange(ManagerClaims.Value.Split(" ").ToList());
-            claimProjects.AddRange(AdminClaims.Value.Split(" ").ToList());
-
-
-            foreach (var projectId in claimProjects)
+            if (GlobalVar.globalCurrentUserClaims != null)
             {
-                if (projectId.Length > 0)
+                var DeveloperClaims = GlobalVar.globalCurrentUserClaims.Find(c => c.Type == "Developer Role");
+                var ManagerClaims = GlobalVar.globalCurrentUserClaims.Find(c => c.Type == "Manager Role");
+                var AdminClaims = GlobalVar.globalCurrentUserClaims.Find(c => c.Type == "Admin Role");
+
+                var claimProjects = DeveloperClaims.Value.Split(" ").ToList();
+                claimProjects.AddRange(ManagerClaims.Value.Split(" ").ToList());
+                claimProjects.AddRange(AdminClaims.Value.Split(" ").ToList());
+
+
+                foreach (var projectId in claimProjects)
                 {
-                    DeveloperProjects.Add(Convert.ToInt32(projectId));
+                    if (projectId.Length > 0)
+                    {
+                        DeveloperProjects.Add(Convert.ToInt32(projectId));
+                    }
                 }
-            }
 
 
-            if (DeveloperProjects.Contains(GlobalVar.ProjectId))
+                if (DeveloperProjects.Contains(GlobalVar.ProjectId))
+                {
+                    context.Succeed(requirement);
+                }
+
+            } else
             {
-                context.Succeed(requirement);
+
+                var DeveloperClaims = context.User.FindFirst(c => c.Type == "Developer Role");
+                var ManagerClaims = context.User.FindFirst(c => c.Type == "Manager Role");
+                var AdminClaims = context.User.FindFirst(c => c.Type == "Admin Role");
+
+                var claimProjects = DeveloperClaims.Value.Split(" ").ToList();
+                claimProjects.AddRange(ManagerClaims.Value.Split(" ").ToList());
+                claimProjects.AddRange(AdminClaims.Value.Split(" ").ToList());
+
+
+                foreach (var projectId in claimProjects)
+                {
+                    if (projectId.Length > 0)
+                    {
+                        DeveloperProjects.Add(Convert.ToInt32(projectId));
+                    }
+                }
+
+
+                if (DeveloperProjects.Contains(GlobalVar.ProjectId))
+                {
+                    context.Succeed(requirement);
+                }
+
             }
+
 
 
 

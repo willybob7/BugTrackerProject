@@ -61,7 +61,13 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsUserLevel = UserClaimsLevel.IsUser(HttpContext.User.Claims.ToList(), projectId);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var UserIsUserLevel = UserClaimsLevel.IsUser(claims.ToList(), projectId);
 
             if (UserIsUserLevel == false)
             {
@@ -101,8 +107,13 @@ namespace BugTrackerProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                var currentUserId = userManager.GetUserId(HttpContext.User);
+                var currentUser = await userManager.FindByIdAsync(currentUserId);
+                var claims = await userManager.GetClaimsAsync(currentUser);
 
-                var UserIsMangerLevel = UserClaimsLevel.IsManager(HttpContext.User.Claims.ToList(), newbug.NewBugAttributes.AssociatedProject);
+                GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+                var UserIsMangerLevel = UserClaimsLevel.IsManager(claims.ToList(), newbug.NewBugAttributes.AssociatedProject);
 
                 if (UserIsMangerLevel && newbug.NewBugAttributes.AssigneeUserId != null)
                 {
@@ -159,7 +170,14 @@ namespace BugTrackerProject.Controllers
 
             GlobalVar.Project = project;
 
-            var UserIsUserLevel = UserClaimsLevel.IsUser(HttpContext.User.Claims.ToList(), bug.AssociatedProject);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+
+            var UserIsUserLevel = UserClaimsLevel.IsUser(claims.ToList(), bug.AssociatedProject);
 
             if (UserIsUserLevel == false)
             {
@@ -236,7 +254,13 @@ namespace BugTrackerProject.Controllers
         public async Task<IActionResult> BugDetails(BugDetailsAndProjectNameAndId updatedBug)
         {
 
-            var UserIsMangerLevel = UserClaimsLevel.IsManager(HttpContext.User.Claims.ToList(), updatedBug.Bug.AssociatedProject);
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var currentUser = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(currentUser);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
+            var UserIsMangerLevel = UserClaimsLevel.IsManager(claims.ToList(), updatedBug.Bug.AssociatedProject);
 
             if (UserIsMangerLevel && updatedBug.Bug.AssigneeUserId != null)
             {
@@ -260,7 +284,7 @@ namespace BugTrackerProject.Controllers
                 updatedBug.Bug.Title = originalBug.Title;
             }
 
-            var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(HttpContext.User.Claims.ToList(), updatedBug.Bug.AssociatedProject);
+            var UserIsDeveloperLevel = UserClaimsLevel.IsDeveloper(claims.ToList(), updatedBug.Bug.AssociatedProject);
 
             if (UserIsDeveloperLevel)
             {
@@ -354,8 +378,14 @@ namespace BugTrackerProject.Controllers
 
         
         [Authorize(Policy = "ManagerPolicy")]
-        public IActionResult DeleteBug(int bugId)
+        public async Task<IActionResult> DeleteBug(int bugId)
         {
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
             var bug = _bugRepository.Delete(bugId);
             return RedirectToAction("ProjectBugs", "Project", new { projectId = bug.AssociatedProject });
         }
@@ -363,8 +393,15 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "ManagerPolicy")]
-        public IActionResult DeleteScreenshot(int screenShotId)
+        public async Task<IActionResult> DeleteScreenshot(int screenShotId)
         {
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
             try
             {
                 _bugRepository.DeleteScreenShots(screenShotId);
@@ -381,8 +418,15 @@ namespace BugTrackerProject.Controllers
 
         [HttpPost]
         [Authorize(Policy = "UserPolicy")]
-        public IActionResult StoreInitialScreenShots(List<IFormFile> Attachments)
+        public async Task<IActionResult> StoreInitialScreenShots(List<IFormFile> Attachments)
         {
+
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
 
             var extensions = new List<string>() { ".tiff", ".pjp", ".pjpeg", ".jfif", ".tif",
             ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib"};
@@ -455,6 +499,13 @@ namespace BugTrackerProject.Controllers
 
         public async Task<List<ScreenShots>> UploadScreenShotsToStorage(int bugId)
         {
+
+            var currentUserId = userManager.GetUserId(HttpContext.User);
+            var user = await userManager.FindByIdAsync(currentUserId);
+            var claims = await userManager.GetClaimsAsync(user);
+
+            GlobalVar.globalCurrentUserClaims = claims.ToList();
+
             List<ScreenShots> uniqueFileNames = new List<ScreenShots>();
             if (GlobalVar.InitialScreenShots == true)
             {
