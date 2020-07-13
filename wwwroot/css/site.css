@@ -255,7 +255,7 @@ body {
         }
 
         .deleteScreenShot {
-            top: 2.8em;
+            top: -2.8em;
             left: -0.3em;
         }
     }
