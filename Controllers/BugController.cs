@@ -18,6 +18,7 @@ using BugTrackerProject.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Runtime.InteropServices.WindowsRuntime;
+using ImageMagick;
 
 namespace BugTrackerProject.Controllers
 {
@@ -431,7 +432,7 @@ namespace BugTrackerProject.Controllers
             var extensions = new List<string>() { ".tiff", ".pjp", ".pjpeg", ".jfif", ".tif",
             ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib"};
 
-            var maxFileSize = 3 * 1024 * 1024;
+            //var maxFileSize = 3 * 1024 * 1024;
 
             string uploadsFolder = Path.Combine(hostingEnvironment.WebRootPath, "temporaryFileStorage");
 
@@ -459,31 +460,44 @@ namespace BugTrackerProject.Controllers
 
 
                     }
-                    else if (file.Length > maxFileSize)
-                    {
+                    //else if (file.Length > maxFileSize)
+                    //{
 
-                        var filePaths = Directory.GetFiles(uploadsFolder).ToList();
+                    //    var filePaths = Directory.GetFiles(uploadsFolder).ToList();
 
-                        if (filePaths.Count > 0)
-                        {
-                            foreach (var path in filePaths)
-                            {
-                                System.IO.File.Delete(path);
-                            }
-                        }
+                    //    if (filePaths.Count > 0)
+                    //    {
+                    //        foreach (var path in filePaths)
+                    //        {
+                    //            System.IO.File.Delete(path);
+                    //        }
+                    //    }
 
-                        return Json(new { status = "fileTooLarge", message = "Please upload a smaller file" });
-                    }
+                    //    return Json(new { status = "fileTooLarge", message = "Please upload a smaller file" });
+                    //}
                     else {
                         var uniqueFileName = "";
                         uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                         string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        using (var stream = System.IO.File.Create(filePath))
-                        {
-                            file.CopyTo(stream);
-                        }
-                    } 
+                        //using (var stream = System.IO.File.Create(filePath))
+                        //{
+                        //    file.CopyTo(stream);
 
+                        //    stream.Position = 0;
+
+
+
+                        //}
+
+                        using (var fileStream = file.OpenReadStream())
+                        {
+                            using (var image = new MagickImage(fileStream))
+                            {
+                                image.Quality = 50;
+                                image.Write(filePath);
+                            }
+                        }
+                    }
                 }
 
                 GlobalVar.InitialScreenShots = true;

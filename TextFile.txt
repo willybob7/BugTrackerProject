@@ -2,7 +2,9 @@
 	
 
 Nice to have:
-
+	use image magick to process screenshots so that you never send a message that says
+		that the image size is too large
+	use an html sanitizer for comments HtmlSanitizer by Michael 
 	add error handling and logging
 	set up the database more correctly doing lazy loading and 
 		don't set up a bunch of serverside code when you could do

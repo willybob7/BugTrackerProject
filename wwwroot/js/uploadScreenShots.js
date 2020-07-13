@@ -99,6 +99,8 @@ function processScreenShot(e) {
                 preview.append(data.image);
                 data.image.className = "imagePreview";
 
+                data.image.style.cssText = "";
+
                 var dataURL = data.image.toDataURL('image/jpeg', 1);
                 var blob = dataURItoBlob(dataURL);
                 filesToUpload.push(new File([blob], files[j].name));
@@ -146,11 +148,13 @@ $('#addBugScreenShotsSubmit').click(function () {
     }).done(function (result) {
         if (result.status === "success") {
             $("#submitBugDetailsForm").submit();
-        } else if (result.status === "fileTooLarge") {
-            clearScreenShots()
-            preview.innerHTML = result.message;
+        //} else if (result.status === "fileTooLarge") {
+        //    clearScreenShots()
+        //    preview.innerHTML = result.message;
         } else if (result.status === "fileNotImage") {
             clearScreenShots();
+            document.querySelector(".spinnerDiv").style.display = "none";
+            document.querySelector(".blurryBackground").style.display = "none"
             preview.innerHTML = result.message;
         }
     });
