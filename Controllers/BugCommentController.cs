@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using BugTrackerProject.Models;
-using BugTrackerProject.ViewModels;
-using Microsoft.CodeAnalysis;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
+﻿using BugTrackerProject.Models;
 using BugTrackerProject.Models.SubModels;
-using System.Drawing.Imaging;
-using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BugTrackerProject.Controllers
 {

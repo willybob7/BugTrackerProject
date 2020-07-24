@@ -9,15 +9,11 @@ using BugTrackerProject.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using BugTrackerProject.Models.SubModels;
-using System.Drawing.Imaging;
-using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using BugTrackerProject.Security;
 using BugTrackerProject.Storage;
 using Microsoft.AspNetCore.Http;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Runtime.InteropServices.WindowsRuntime;
 using ImageMagick;
 
 namespace BugTrackerProject.Controllers
@@ -530,30 +526,38 @@ namespace BugTrackerProject.Controllers
                 foreach (var file in filePaths)
                 {
 
-                    using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                    var fileNameSplit = file.Split("\\");
+                    var fileNameSplitLength = fileNameSplit.Length;
+
+                    var placeholderFile = "JustHereToKeepTheFolderFromBeingDeleted.png";
+
+                    if (fileNameSplit[fileNameSplitLength - 1] != placeholderFile)
                     {
-
-                        var fileNameSplit = stream.Name.Split("\\");
-                        var fileNameSplitLength = fileNameSplit.Length;
-
-                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileNameSplit[fileNameSplitLength - 1];
-
-                        using (var ms = new MemoryStream())
+                        using (FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Read))
                         {
-                            stream.CopyTo(ms);
-                            var fileBytes = ms.ToArray();
-                            var downloadUrl = await firebaseFileStorage.Upload(fileBytes, uniqueFileName);
-                            uniqueFileNames.Add(new ScreenShots
-                            {
-                                Url = downloadUrl,
-                                AssociatedBug = bugId,
-                                FileName = uniqueFileName
-                            });
 
+
+                            var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileNameSplit[fileNameSplitLength - 1];
+
+                            using (var ms = new MemoryStream())
+                            {
+                                stream.CopyTo(ms);
+                                var fileBytes = ms.ToArray();
+                                var downloadUrl = await firebaseFileStorage.Upload(fileBytes, uniqueFileName);
+                                uniqueFileNames.Add(new ScreenShots
+                                {
+                                    Url = downloadUrl,
+                                    AssociatedBug = bugId,
+                                    FileName = uniqueFileName
+                                });
+
+                            }
                         }
 
+                        System.IO.File.Delete(file);
+
                     }
-                    System.IO.File.Delete(file);
+                   
                 }
 
             }

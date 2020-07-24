@@ -1,12 +1,8 @@
-﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Firebase.Auth;
+﻿using Firebase.Auth;
 using Firebase.Storage;
+using Microsoft.Extensions.Options;
 using System.IO;
-using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace BugTrackerProject.Storage
 {

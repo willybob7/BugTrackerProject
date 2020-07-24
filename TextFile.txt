@@ -2,8 +2,7 @@
 	
 
 Nice to have:
-	use image magick to process screenshots so that you never send a message that says
-		that the image size is too large
+	
 	use an html sanitizer for comments HtmlSanitizer by Michael 
 	add error handling and logging
 	set up the database more correctly doing lazy loading and 
@@ -17,8 +16,7 @@ Nice to have:
 	crop pictures before uploading
 	upload picture to storage/resize them (possibly firebase like I did before)
 		and then somehow get a date sent to the view to show when the picture was added
-		use an image processing library to make a thumbnail and then use that as the link to the slideshow
-		this will probably all be possible with adding an image storage somewhere
+		
 	Make a feed page that shows the events that have happened in the project and allows you to 
 		add comments about each happening
 	Make it so that a comment can only be edited by the creator, but able to be deleted by the admin/manager
